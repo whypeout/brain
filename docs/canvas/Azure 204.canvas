@@ -1,0 +1,39 @@
+{
+	"nodes":[
+		{"id":"bb2be16962bbca71","x":-218,"y":-304,"width":250,"height":60,"type":"text","text":"Deploy"},
+		{"id":"a31553828ae1fd64","x":-218,"y":-225,"width":250,"height":189,"type":"text","text":"Automated Deploy\n- Azure DevOps Services\n- GitHub\n- Bitbucket"},
+		{"id":"0389cbaf28eb4095","x":-218,"y":-21,"width":250,"height":191,"type":"text","text":"Manual Deployment\n- Git\n- CLI (az webapp up)\n- Zip Deploy (curl)\n- FTP/S"},
+		{"id":"c7a7b43c250b3415","x":-217,"y":200,"width":467,"height":50,"type":"text","text":"Deployment Slot : Standard App Service Plan or better"},
+		{"id":"4a37e82f497566c6","x":-217,"y":280,"width":467,"height":60,"type":"text","text":"Continuously deploy code: branch testing, QA & staging to staging slot continuously"},
+		{"id":"a111ff4135977c00","x":-217,"y":376,"width":467,"height":284,"type":"text","text":"Container Continuous Deploy:\n- Build & Tag image: dont do latest; do specific ID like commit ID/timestamp\n- Push tagged image: pipeline push image to az container registry **ACR**. pull image to deployment slot\n- Update deployment slot with new image tag: auto restart site & pull new container image"},
+		{"id":"d5fac5c00e659ab5","x":-380,"y":-540,"width":250,"height":60,"type":"text","text":"Implement Containerized Solution"},
+		{"id":"35a56f394c71cb6b","x":532,"y":-455,"width":328,"height":275,"type":"text","text":"Identity Providers\n- Microsoft Identity platform\n- Facebook\n- Google\n- X\n- OpenID Connect provider\n- GitHub"},
+		{"id":"b57f0e8d29f889ba","x":539,"y":-600,"width":314,"height":60,"type":"text","text":"Authorization & Authentication"},
+		{"id":"ee832c8f7a2c8476","x":160,"y":-229,"width":258,"height":220,"type":"text","text":"Dedicated :\n- Basic\n- Standard\n- Premium\n- Premium v2\n- Premium v3"},
+		{"id":"34d97519d2c9b367","x":160,"y":11,"width":258,"height":119,"type":"text","text":"Isolated : \n- Isolated\n- Isolated v2"},
+		{"id":"daf0928e80dd89d1","x":160,"y":-360,"width":258,"height":112,"type":"text","text":"Shared & Free\n**cannot scale out**\nfor development & testing purpose"},
+		{"id":"9a26d5e8968c34cc","x":168,"y":-464,"width":250,"height":57,"type":"text","text":"App Service plans"},
+		{"id":"dba0f8f5ae559ba3","x":532,"y":-133,"width":328,"height":144,"type":"text","text":"Authorization behavior:\n- Allow unauthenticated requests\n- Require authentication"},
+		{"id":"8538bd95e3099556","x":534,"y":21,"width":326,"height":54,"type":"text","text":"Token Store avail to app\nLogging to log files"},
+		{"id":"e83951692b041b90","x":-130,"y":-720,"width":250,"height":60,"type":"text","text":"Networking Feature"},
+		{"id":"f01d842a5b543e97","x":-130,"y":-960,"width":250,"height":205,"type":"text","text":"Multi-tenant : Free, Shared, Basic, Standard, Premium, Premium V2, Premium V3\n\nSingle-tenant: Isolated & IsolatedV2"},
+		{"id":"8c14ff593f71e456","x":-130,"y":-1060,"width":250,"height":60,"type":"text","text":"http **FrontEnd** do request\napp **Workers** do response"}
+	],
+	"edges":[
+		{"id":"94e81bc167c4e42d","fromNode":"d5fac5c00e659ab5","fromSide":"right","toNode":"9a26d5e8968c34cc","toSide":"top"},
+		{"id":"d62468eb34801390","fromNode":"9a26d5e8968c34cc","fromSide":"left","toNode":"daf0928e80dd89d1","toSide":"left"},
+		{"id":"da9ff8d8d773d360","fromNode":"9a26d5e8968c34cc","fromSide":"left","toNode":"34d97519d2c9b367","toSide":"left"},
+		{"id":"6ab4985c24f62750","fromNode":"d5fac5c00e659ab5","fromSide":"right","toNode":"bb2be16962bbca71","toSide":"top"},
+		{"id":"08c0973db62cd802","fromNode":"bb2be16962bbca71","fromSide":"left","toNode":"a31553828ae1fd64","toSide":"left"},
+		{"id":"81a43df103857c30","fromNode":"bb2be16962bbca71","fromSide":"left","toNode":"0389cbaf28eb4095","toSide":"left"},
+		{"id":"c3545d0069de9d9e","fromNode":"0389cbaf28eb4095","fromSide":"bottom","toNode":"c7a7b43c250b3415","toSide":"top"},
+		{"id":"82a2f3c08d845646","fromNode":"c7a7b43c250b3415","fromSide":"bottom","toNode":"4a37e82f497566c6","toSide":"top"},
+		{"id":"7fef7190a559271d","fromNode":"4a37e82f497566c6","fromSide":"bottom","toNode":"a111ff4135977c00","toSide":"top"},
+		{"id":"d73229d707b08e38","fromNode":"9a26d5e8968c34cc","fromSide":"left","toNode":"ee832c8f7a2c8476","toSide":"left"},
+		{"id":"83da40f42d4ee9f7","fromNode":"d5fac5c00e659ab5","fromSide":"right","toNode":"b57f0e8d29f889ba","toSide":"top"},
+		{"id":"deee36a3ab5fda63","fromNode":"b57f0e8d29f889ba","fromSide":"left","toNode":"35a56f394c71cb6b","toSide":"left"},
+		{"id":"ff71c3210959ebe4","fromNode":"d5fac5c00e659ab5","fromSide":"right","toNode":"e83951692b041b90","toSide":"right"},
+		{"id":"7c3600449891714f","fromNode":"e83951692b041b90","fromSide":"left","toNode":"f01d842a5b543e97","toSide":"left"},
+		{"id":"db416e5a0e20e8c3","fromNode":"e83951692b041b90","fromSide":"left","toNode":"8c14ff593f71e456","toSide":"left"}
+	]
+}
