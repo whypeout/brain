@@ -1524,3 +1524,692 @@ To learn more about some of the topics explored in this module, check out the fo
 - [Transfer billing ownership of an Azure subscription to another account](https://learn.microsoft.com/en-us/azure/billing/billing-subscription-transfer)
 
 ---
+# Secure your Azure resources with Azure role-based access control (Azure RBAC)
+
+# Introduction
+
+For any organization using the cloud, securing your Azure resources such as virtual machines, websites, networks, and storage is a critical function. You want to ensure that your data and assets are protected, but still grant your employees and partners the access they need to perform their jobs. Azure RBAC is an authorization system in Azure that helps you manage who has access to Azure resources, what they can do with those resources, and where they have access.
+
+Suppose you work for First Up Consultants, which is an engineering firm that specializes in circuit and electrical design. They've moved their workloads and assets to Azure to make collaboration easier across several offices and other companies. You work in the IT department at First Up Consultants. You're responsible for keeping the company's assets secure, but still allowing users to access the resources they need. You've heard that Azure RBAC can help you manage resources in Azure.
+
+In this module, you'll learn how to use Azure RBAC to manage access to resources in Azure.
+
+## Learning objectives
+
+In this module, you'll:
+
+- Verify access to resources for yourself and others.
+- Grant access to resources.
+- View activity logs of Azure RBAC changes.
+
+# What is Azure RBAC?
+
+When it comes to identity and access, most organizations that are considering using the public cloud are concerned about two things:
+
+1. Ensuring that when people leave the organization, they lose access to resources in the cloud.
+2. Striking the right balance between autonomy and central governance. For example, giving project teams the ability to create and manage virtual machines in the cloud, while centrally controlling the networks those VMs use to communicate with other resources.
+
+Microsoft Entra ID and Azure RBAC work together to make it simple to carry out these goals.
+
+## Azure subscriptions
+
+First, remember that each Azure subscription is associated with a single Microsoft Entra directory. Users, groups, and applications in that directory can manage resources in the Azure subscription. The subscriptions use Microsoft Entra ID for single sign-on (SSO) and access management. You can extend your on-premises Active Directory to the cloud by using **Microsoft Entra Connect**. This feature allows your employees to manage their Azure subscriptions by using their existing work identities. When you disable an on-premises Active Directory account, it automatically loses access to all Azure subscriptions connected with Microsoft Entra ID.
+
+## What's Azure RBAC?
+
+Azure RBAC is an authorization system built on Azure Resource Manager that provides fine-grained access management for resources in Azure. With Azure RBAC, you can grant the exact access that users need to do their jobs. For example, you can use Azure RBAC to let one employee manage virtual machines in a subscription, while another manages SQL databases within the same subscription.
+
+The following video describes Azure RBAC in detail:
+
+![](https://www.microsoft.com/en-us/videoplayer/embed/RE2yEvk?postJsllMsg=true)
+
+You can grant access by assigning the appropriate Azure role to users, groups, and applications at a certain scope. The scope of a role assignment can be a management group, subscription, a resource group, or a single resource. A role assigned at a parent scope also grants access to the child scopes contained within it. For example, a user with access to a resource group can manage all the resources it contains like websites, virtual machines, and subnets. The Azure role that you assign dictates what resources the user, group, or application can manage within that scope.
+
+The following diagram depicts how the classic subscription administrator roles, Azure roles, and Microsoft Entra roles are related at a high level. Child scopes, such as service instances, inherit roles assigned at a higher scope, like an entire subscription.
+
+![Diagram that depicts how the classic subscription administrator roles, Azure roles, and Microsoft Entra roles are related at a high level.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/2-azuread-and-azure-roles.png)
+
+In the preceding diagram, a subscription is associated with only one Microsoft Entra tenant. Also note that a resource group can have multiple resources, but it's associated with only one subscription. Although it's not obvious from the diagram, a resource can be bound to only one resource group.
+
+## What can I do with Azure RBAC?
+
+Azure RBAC allows you to grant access to Azure resources that you control. Suppose you need to manage access to resources in Azure for the development, engineering, and marketing teams. You’ve started to receive access requests, and you need to quickly learn how access management works for Azure resources.
+
+Here are some scenarios you can implement with Azure RBAC:
+
+- Allow one user to manage virtual machines in a subscription and another user to manage virtual networks.
+- Allow a database administrator group to manage SQL databases in a subscription.
+- Allow a user to manage all resources in a resource group, such as virtual machines, websites, and subnets.
+- Allow an application to access all resources in a resource group.
+
+## Azure RBAC in the Azure portal
+
+In several areas in the Azure portal, you'll see a pane named **Access control (IAM)**, also known as _identity and access management_. On this pane, you can see who has access to that area and their role. Using this same pane, you can grant or remove access.
+
+The following shows an example of the Access control (IAM) pane for a resource group. In this example, Alain has been assigned the Backup Operator role for this resource group.
+
+![Screenshot of the Azure portal showing the Access control Role assignment pane with the Backup operator section highlighted.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/2-resource-group-access-control.png)
+
+## How does Azure RBAC work?
+
+You can control access to resources using Azure RBAC by creating role assignments, which control how permissions are enforced. To create a role assignment, you need three elements: a security principal, a role definition, and a scope. You can think of these elements as _who_, _what_, and _where_.
+
+### 1. Security principal (who)
+
+A _security principal_ is just a fancy name for a user, group, or application to which you want to grant access.
+
+![An illustration showing security principal including user, group, and service principal.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/2-rbac-security-principal.png)
+
+### 2. Role definition (what)
+
+A _role definition_ is a collection of permissions. It's sometimes just called a role. A role definition lists the permissions the role can perform such as read, write, and delete. Roles can be high-level, like Owner, or specific, like Virtual Machine Contributor.
+
+![An illustration listing different built-in and custom roles with zoom-in on the definition for the contributor role.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/2-rbac-role-definition.png)
+
+Azure includes several built-in roles that you can use. The following lists four fundamental built-in roles:
+
+- **Owner**: Has full access to all resources, including the right to delegate access to others.
+- **Contributor**: Can create and manage all types of Azure resources, but can’t grant access to others.
+- **Reader**: Can view existing Azure resources.
+- **User Access Administrator**: Lets you manage user access to Azure resources.
+
+If the built-in roles don't meet the specific needs of your organization, you can create your own custom roles.
+
+### 3. Scope (where)
+
+_Scope_ is the level where the access applies. This is helpful if you want to make someone a Website Contributor but only for one resource group.
+
+In Azure, you can specify a scope at multiple levels: management group, subscription, resource group, or resource. Scopes are structured in a parent-child relationship. When you grant access at a parent scope, the child scopes automatically inherit those permissions. For example, if a group is assigned the Contributor role at the subscription scope, it will inherit the role for all resource groups and resources within the subscription.
+
+![An illustration showing a hierarchical representation of different Azure levels to apply scope. The hierarchy, starting with the highest level, is in this order: Management group, subscription, resource group, and resource.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/2-rbac-scope.png)
+
+### Role assignment
+
+Once you have determined the who, what, and where, you can combine those elements to grant access. A _role assignment_ is the process of binding a role to a security principal at a particular scope for the purpose of granting access. To grant access, you'll create a role assignment. To revoke access, you'll remove a role assignment.
+
+The following example shows how the Marketing group has been assigned the Contributor role at the sales resource group scope.
+
+![An illustration showing a sample role assignment process for Marketing group, which is a combination of security principal, role definition, and scope. The Marketing group falls under the Group security principal and has a Contributor role assigned for the Resource group scope.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/2-rbac-overview.png)
+
+## Azure RBAC is an allow model
+
+Azure RBAC is an _allow_ model. This means that when you're assigned a role, Azure RBAC allows you to perform certain actions such as read, write, or delete. If one role assignment grants you read permissions to a resource group, and a different role assignment grants you write permissions to the same resource group, then you'll have read and write permissions on that resource group.
+
+Azure RBAC has something called `NotActions` permissions. You can use `NotActions` to create a set of not allowed permissions. The access a role grants—the _effective permissions_—is computed by subtracting the `NotActions` operations from the `Actions` operations. For example, the [Contributor](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#contributor) role has both `Actions` and `NotActions`. The wildcard (*) in `Actions` indicates that it can perform all operations on the control plane. You'd then subtract the following operations in `NotActions` to compute the effective permissions:
+
+- Delete roles and role assignments
+- Create roles and role assignments
+- Grant the caller User Access Administrator access at the tenant scope
+- Create or update any blueprint artifacts
+- Delete any blueprint artifacts
+
+# Exercise - List access using Azure RBAC and the Azure portal
+
+At First Up Consultants, you've been granted access to a resource group for the marketing team. You want to familiarize yourself with the Azure portal and see what roles are currently assigned.
+
+You need an Azure subscription to complete the exercises. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/free/) and add a subscription before you begin. If you're a student, you can take advantage of the [Azure for students](https://azure.microsoft.com/free/students/) offer.
+
+## List role assignments for yourself
+
+Follow these steps to see what roles are currently assigned to you.
+
+1. Sign in to the [Azure portal](https://portal.azure.com/).
+    
+2. On the **Profile** menu, select the ellipsis (**...**) to see more links.
+    
+    ![Screenshot of user menu with My permissions highlighted.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/4-my-permissions-menu.png)
+    
+3. Select **My permissions** to open the **My permissions** pane.
+    
+    ![Screenshot of the My permissions pane.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/4-my-permissions-pane.png)
+    
+    You'll find the roles that you've been assigned and the scope. Your list will look different.
+    
+
+## List role assignments for a resource group
+
+Follow these steps to see what roles are assigned at the resource group scope.
+
+1. In the Search box at the top, search for and select **Resource groups**.
+    
+    ![Screenshot of the Azure portal that shows how to search for resource groups.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/4-resource-groups.png)
+    
+2. In the list of resource groups, select a resource group.
+    
+    These steps use a resource group named **example-group**, but your resource group's name will be different.
+    
+3. On the left menu pane, select **Access control (IAM)**.
+    
+    ![Screenshot showing Access control (IAM) option on the resource group pane.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/4-resource-group-access-control.png)
+    
+4. Select the **Role assignments** tab.
+    
+    This tab shows who has access to the resource group. Notice that some roles are scoped to **This resource**, while others are **(Inherited)** from a parent scope.
+    
+    ![Screenshot showing Role assignments tab for the selected resource group.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/4-resource-group-role-assignment.png)
+    
+
+## List roles
+
+As you learned in the previous unit, a role is a collection of permissions. Azure has more than 70 built-in roles that you can use in your role assignments. To list the roles:
+
+- In the menu bar at the top of the pane, select the **Roles** tab to list of all the built-in and custom roles.
+    
+    Select a role's **View** link in the **Details** column, then select the **Assignments** tab to display the number of users and groups assigned to that role.
+    
+    ![Screenshot showing a list of Roles and users and groups assigned to each role.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/4-roles-list.png)
+    
+
+In this unit, you learned how to list the role assignments for yourself in the Azure portal. You also learned how to list the role assignments for a resource group.
+# Exercise - Grant access using Azure RBAC and the Azure portal
+
+
+A coworker named Alain at First Up Consultants needs permission to create and manage virtual machines for a project on which they're working. Your manager has asked that you handle this request. Using the best practice to grant users the least privileges to get their work done, you decide to assign Alain the Virtual Machine Contributor role for a resource group.
+
+## Grant access
+
+Follow this procedure to assign the Virtual Machine Contributor role to a user at the resource group scope.
+
+1. Sign in to the [Azure portal](https://portal.azure.com/) as an administrator that has permissions to assign roles, such as [User Access Administrator](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#user-access-administrator) or [Owner](https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#owner).
+    
+2. In the Search box at the top, search for **Resource groups**.
+    
+    ![Screenshot of the Azure portal that shows how to search for resource groups.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/5-resource-groups.png)
+    
+3. In the list of resource groups, select a resource group.
+    
+    These steps use a resource group named **example-group**, but your resource group's name will be different.
+    
+4. On the left menu pane, select **Access control (IAM)**.
+    
+5. Select the **Role assignments** tab to display the current list of role assignments at this scope.
+    
+    ![Screenshot showing Role assignments tab for the selected resource group.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/5-resource-group-role-assignment.png)
+    
+6. Select **Add** > **Add role assignment**.
+    
+    If you don't have permissions to assign roles, the **Add role assignment** option will be disabled.
+    
+    ![Screenshot that shows Add role assignment menu.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/5-resource-group-add-role-assignment.png)
+    
+    The **Add role assignment** page opens.
+    
+7. On the **Role** tab, search for and select **Virtual Machine Contributor**.
+    
+    ![Screenshot that shows Add role assignment and list of roles.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/5-select-role.png)
+    
+8. Select **Next**.
+    
+9. On the **Members** tab, select **Select members**.
+    
+10. Search for and select a user.
+    
+    ![Screenshot of the add role assignment page that shows the select members option.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/5-select-members-option.png)
+    
+11. Select **Select** to add the user to the Members list.
+    
+12. Select **Next**.
+    
+13. On the **Review + assign** tab, review the role assignment settings.
+    
+14. Select **Review + assign** to assign the role.
+    
+    After a few moments, the user is assigned the Virtual Machine Contributor role at the resource group scope. The user can now create and manage virtual machines just within this resource group.
+    
+    ![Screenshot that shows the Virtual Machine Contributor role assigned to a user.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/5-vm-contributor-assignment.png)
+    
+
+## Remove access
+
+In Azure RBAC, you can remove a role assignment to remove access.
+
+1. In the list of role assignments, select **View Assignments**.
+    
+2. Search for and check the box for the user with the Virtual Machine Contributor role.
+    
+3. Select **Remove**.
+    
+    ![Screenshot that shows the Remove role assignment message.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/5-remove-role-assignment.png)
+    
+4. In the **Remove role assignments** message that appears, select **Yes**.
+    
+
+In this unit, you learned how to grant a user access to create and manage virtual machines in a resource group using the Azure portal.
+
+# Exercise - View activity logs for Azure RBAC changes
+
+First Up Consultants reviews Azure RBAC changes quarterly for auditing and troubleshooting purposes. You know that changes get logged in the [Azure Activity Log](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/activity-log). Your manager has asked if you can generate a report of the role assignment and custom role changes for the last month.
+
+## View activity logs
+
+The easiest way to get started is to view the activity logs with the Azure portal.
+
+1. Select **All services**, then search for **Activity log**.
+    
+    ![Screenshot of the Azure portal showing the location of Activity logs option.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/6-all-services-activity-log.png)
+    
+2. Select **Activity log** to open the activity log.
+    
+    ![Screenshot of the Azure portal showing the Activity logs.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/6-activity-log-portal.png)
+    
+3. Set the **Timespan** filter to **Last month**.
+    
+4. Add an **Operation** filter and type **role** to filter the list.
+    
+5. Select the following Azure RBAC operations:
+    
+    - Create role assignment (roleAssignments)
+    - Delete role assignment (roleAssignments)
+    - Create or update custom role definition (roleDefinitions)
+    - Delete custom role definition (roleDefinitions)
+    
+    ![Screenshot showing a list of Operation filter with the four filters selected.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/6-operation-filter.png)
+    
+    After a moment, you'll get a list of all the role assignment and role definition operations for the last month. There's also a button at the top of the screen to download the activity log as a CSV file.
+    
+6. Select one of the operations to get the activity log details.
+    
+    ![Screenshot showing the details for an activity log.](https://learn.microsoft.com/en-us/training/modules/secure-azure-resources-with-rbac/media/6-activity-log-details.png)
+    
+
+In this unit, you learned how to use Azure Activity Log to list Azure RBAC changes in the portal and generate a simple report.
+
+---
+
+# Allow users to reset their password with Microsoft Entra self-service password reset
+
+
+# Introduction
+
+Suppose you're an IT administrator for a large retail organization. Your organization has started using Microsoft Entra ID to allow employees to securely sign in and use software as a service (SaaS) apps and access the organization's resources in Microsoft 365. You're overwhelmed with password-reset requests because you currently reset employees' passwords manually. To get these employees back to being productive quickly and reduce your workload, you decide to evaluate and set up self-service password reset in Microsoft Entra ID.
+
+In this module, you'll learn how Azure supports this feature and how to set it up. Note that only paid subscriptions can leverage this, while free and pay-as-you-go can't.
+
+By the end of this module, you'll be able to configure self-service password reset in Microsoft Entra ID.
+
+## Learning objectives
+
+In this module, you'll:
+
+- Decide whether to implement self-service password reset.
+- Implement self-service password reset to meet your requirements.
+- Configure self-service password reset to customize the experience.
+
+## Prerequisites
+
+- Basic understanding of Microsoft Entra ID
+
+# What is self-service password reset in Microsoft Entra ID?
+
+You've been asked to assess ways to reduce help-desk costs in your retail organization. You've noticed that the support staff spends a lot of their time resetting passwords for users. Users often complain about delays with this process, and these delays impact their productivity. You want to understand how you can configure Azure to allow users to manage their own passwords.
+
+In this unit, you'll learn how self-service password reset (SSPR) works in Microsoft Entra ID.
+
+## Why use SSPR?
+
+In Microsoft Entra ID, any user can change their password if they're already signed in. But if they're not signed in, forgot their password, or it's expired, they'll need to reset their password. With SSPR, users can reset their passwords in a web browser or from a Windows sign-in screen to regain access to Azure, Microsoft 365, and any other application that uses Microsoft Entra ID for authentication.
+
+SSPR reduces the load on administrators because users can fix password problems themselves without having to call the help desk. Also, it minimizes the productivity impact of a forgotten or expired password. Users don't have to wait until an administrator is available to reset their password.
+
+## How SSPR works
+
+The user initiates a password reset either by going directly to the password-reset portal, or by selecting the **Can't access your account** link on a sign-in page. The reset portal takes these steps:
+
+1. **Localization**: The portal checks the browser's locale setting and renders the SSPR page in the appropriate language.
+2. **Verification**: The user enters their username and passes a CAPTCHA to ensure that it's a user and not a bot.
+3. **Authentication**: The user enters the required data to authenticate their identity. They might enter a code or answer security questions.
+4. **Password reset**: If the user passes the authentication tests, they can enter a new password and confirm it.
+5. **Notification**: A message is sent to the user to confirm the reset.
+
+There are several ways you can customize the SSPR user experience. For example, you can add your company logo to the sign-in page so users know they're in the right place to reset their password.
+
+## Authenticate a password reset
+
+It's critical to verify a user's identity before you allow a password reset. Malicious users might exploit any weakness in the system to impersonate that user. Azure supports six different ways to authenticate reset requests.
+
+As an administrator, you can choose the methods to use when you configure SSPR. Enable two or more of these methods so that users can choose the ones they can easily use. The methods are:
+
+Expand table
+
+|Authentication method|How to register|How to authenticate for a password reset|
+|---|---|---|
+|Mobile app notification|Install the Microsoft Authenticator app on your mobile device, then register it on the multifactor authentication setup page.|Azure sends a notification to the app, which you can either verify or deny.|
+|Mobile app code|This method also uses the Authenticator app, and you install and register it in the same way.|Enter the code from the app.|
+|Email|Provide an email address that's external to Azure and Microsoft 365.|Azure sends a code to the address, which you enter in the reset wizard.|
+|Mobile phone|Provide a mobile phone number.|Azure sends a code to the phone in an SMS message, which you enter in the reset wizard. You can also choose to get an automated call.|
+|Office phone|Provide a nonmobile phone number.|You receive an automated call to this number and press #.|
+|Security questions|Select questions such as "In what city was your mother born?" and save their responses.|Answer the questions.|
+
+In free and trial Microsoft Entra organizations, phone call options aren't supported.
+
+### Require the minimum number of authentication methods
+
+You can specify the minimum number of methods that the user must set up, either one or two. For example, you might enable the mobile app code, email, office phone, and security questions methods and specify a minimum of two methods. Users can then choose the two methods they prefer, like mobile app code and email.
+
+For the security-question method, you can specify a minimum number of questions the user must set up to register for this method. You also can specify a minimum number of questions they must answer correctly to reset their password.
+
+After your users register the required information for the minimum number of methods you've specified, they're considered registered for SSPR.
+
+### Recommendations
+
+- Enable two or more of the authentication reset request methods.
+- Use the mobile app notification or code as the primary method. But also enable the email or office phone methods to support users without mobile devices.
+- The mobile phone method isn't a recommended method, because it's possible to send fraudulent SMS messages.
+- The security-question option is the least recommended method, because the answers to the security questions might be known to other people. Only use the security-question method in combination with at least one other method.
+
+### Accounts associated with administrator roles
+
+- A strong, two-method authentication policy is always applied to accounts with an administrator role, regardless of your configuration for other users.
+- The security-question method isn't available to accounts associated with an administrator role.
+
+## Configure notifications
+
+Administrators can choose how users are notified of password changes. There are two options you can enable:
+
+- **Notify users on password resets**: The user who resets their own password is notified to their primary and secondary email addresses. If the reset was done by a malicious user, this notification alerts the user, who can take mitigation steps.
+- **Notify all admins when other admins reset their password**: All administrators are notified when another administrator resets their password.
+
+## License requirements
+
+There are three editions of Microsoft Entra ID: free, Premium P1, and Premium P2. The password-reset functionality you can use depends on your edition.
+
+Any user who is signed in can change their password, regardless of the edition of Microsoft Entra ID.
+
+What if you're not signed in, and you've forgotten your password or your password has expired? In this case, you can use SSPR in Microsoft Entra ID P1 or P2. It's also available with Microsoft 365 Apps for business or Microsoft 365.
+
+In a hybrid situation, where you have Active Directory on-premises and Microsoft Entra ID in the cloud, any password change in the cloud must be written back to the on-premises directory. This writeback support is available in Microsoft Entra ID P1 or P2. It's also available with Microsoft 365 Apps for business.
+
+## SSPR deployment options
+
+You can deploy SSPR with password writeback by using [Microsoft Entra Connect](https://learn.microsoft.com/en-us/azure/active-directory/authentication/tutorial-enable-sspr-writeback) or [cloud sync](https://learn.microsoft.com/en-us/azure/active-directory/authentication/tutorial-enable-cloud-sync-sspr-writeback), depending on user needs. You can deploy each option side-by-side in different domains to target different sets of users. This helps existing users on-premises to write back password changes, while adding an option for users in disconnected domains because of a company merger or split. Users from an existing on-premises domain can use Microsoft Entra Connect, while new users from a merger can use cloud sync in another domain.
+
+Cloud sync can also provide higher availability, because it doesn't rely on a single instance of Microsoft Entra Connect. For a feature comparison between the two deployment options, see [Comparison between Microsoft Entra Connect and cloud sync](https://learn.microsoft.com/en-us/azure/active-directory/cloud-sync/what-is-cloud-sync#how-is-azure-ad-connect-cloud-sync-different-from-azure-ad-connect-sync).
+
+
+# Implement Microsoft Entra self-service password reset
+
+You've decided to implement self-service password reset (SSPR) in Microsoft Entra ID for your organization. You want to start using SSPR for a group of 20 users in the marketing department as a trial deployment. If everything works well, you'll enable SSPR for your whole organization.
+
+In this unit, you'll learn how to enable SSPR in Microsoft Entra ID.
+
+## Prerequisites
+
+Before you start to configure SSPR, you need a:
+
+- **Microsoft Entra organization**: This organization must have at least a trial license enabled.
+- **Microsoft Entra account with Global Administrator privileges**: You'll use this account to set up SSPR.
+- **Non-administrative user account**: You'll use this account to test SSPR. It's important that this account isn't an administrator, because Microsoft Entra imposes extra requirements on administrative accounts for SSPR. This user, and all user accounts, must have a valid license to use SSPR.
+- **Security group with which to test the configuration**: The non-administrative user account must be a member of this group. You'll use this security group to limit who you roll SSPR out to.
+
+If you don't already have a Microsoft Entra organization that you can use for this module, we'll set one up in the next unit.
+
+## Scope of SSPR rollout
+
+There are three settings for the **Self-service password reset enabled** property:
+
+- **None**: No users in the Microsoft Entra organization can use SSPR. This value is the default.
+- **Selected**: Only the members of the specified security group can use SSPR. You can use this option to enable SSPR for a targeted group of users who can test it and verify that it works as expected. When you're ready to roll it out broadly, set the property to **Enabled** so that all users have access to SSPR.
+- **All**: All users in the Microsoft Entra organization can use SSPR.
+
+## Configure SSPR
+
+** Here are the high-level steps to configure SSPR:
+
+1. Go to the [Azure portal](https://portal.azure.com/), then to **Microsoft Entra ID** > **Manage** > **Password reset**.
+    
+2. **Properties**:
+    
+    - Enable SSPR.
+    - You can enable it for all users in the Microsoft Entra organization or for selected users.
+    - To enable for selected users, you must specify the security group. Members of this group can use SSPR.
+    
+    ![Screenshot of the Password Reset configuration panel. Properties option is selected allowing user to enable self service password resets.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/3-enable-sspr.png)
+    
+3. **Authentication methods**:
+    
+    - Choose whether to require one or two authentication methods.
+    - Choose the authentication methods that the users can use.
+    
+    ![Screenshot of the Password Reset panel's Authentication methods option selected displaying panel with authentication options.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/3-auth-methods.png)
+    
+4. **Registration**:
+    
+    - Specify whether users are required to register for SSPR when they next sign in.
+    - Specify how often users are asked to reconfirm their authentication information.
+    
+    ![Screenshot of the Password Reset panel's Registration option selected displaying panel with registration options.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/3-registration-options.png)
+    
+5. **Notifications**: Choose whether to notify users and administrators of password resets.
+    
+    ![Screenshot of the Password Reset panel's Notification option selected displaying panel with notification options.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/3-notification-settings.png)
+    
+6. **Customization**: Provide an email address or web page URL where your users can get help.
+    
+    ![Screenshot of the Password Reset panel's Customization option selected displaying panel with helpdesk options.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/3-customization-settings.png)
+
+# Exercise - Set up self-service password reset
+
+In this unit, you'll configure and test self-service password reset (SSPR) by using your mobile phone. You'll need to use your mobile phone to complete the password-reset process in this exercise.
+
+## Create a Microsoft Entra organization
+
+For this step, you'll want to create a new directory and sign up for trial Premium subscription for Microsoft Entra ID.
+
+1. Sign in to the [Azure portal](https://portal.azure.com/).
+    
+2. Select **Create a resource** > **Identity** > **Microsoft Entra ID**.
+    
+    ![Screenshot that shows Microsoft Entra ID in the Azure Marketplace.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/4-create-active-directory.png)
+    
+3. Select **Microsoft Entra ID**, then select **Next : Configuration**.
+    
+4. On the **Create tenant** page, use the following values. Then select **Review + Create**, followed by **Create**.
+    
+    Expand table
+	    
+| Property            | Value                                                                                                 |
+| ------------------- | ----------------------------------------------------------------------------------------------------- |
+| Organization name   | Choose any organization name.                                                                         |
+| Initial domain name | Choose a domain name that's unique within **.onmicrosoft.com**. Make a note of the domain you choose. |
+| Country or region   | United States.                                                                                        |
+    
+5. Complete the CAPTCHA, then select **Submit**.
+    
+6. After you create the organization, select the F5 key to refresh the page. Select your user account and then select **Switch directory**.
+    
+7. Select the organization you just created.
+    
+
+## Create a Microsoft Entra ID P2 trial subscription
+
+Now activate a trial Premium subscription for the organization so that you can test SSPR.
+
+1. Go to **Microsoft Entra ID** > **Manage** > **Password reset**.
+2. Select **Get a free Premium trial to use this feature**.
+3. Under **Microsoft Entra ID P2**, expand **Free trial**, and select **Activate**.
+4. Refresh the browser to see the **Password reset - Properties** page. You might need to refresh a few times.
+
+## Create a group
+
+You want to roll out SSPR to a limited set of users first to make sure your SSPR configuration works as expected. Let's begin by creating a security group for the limited rollout.
+
+1. In the Microsoft Entra organization you created, under **Manage**, select **Groups**.
+    
+2. Select **New Group**.
+    
+3. Enter the following values:
+    
+| Setting           | Value                                   |
+| ----------------- | --------------------------------------- |
+| Group type        | Security                                |
+| Group name        | SSPRTesters                             |
+| Group description | Members are testing the rollout of SSPR |
+| Membership type   | Assigned                                |
+|                   |                                         |
+    
+4. Select **Create**.
+    
+    ![Screenshot that shows new group form filled out and the create button highlighted.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/4-create-group.png)
+    
+
+## Create a user account
+
+To test your configuration, create an account that's not associated with an administrator role. You'll also assign the account to the group you created.
+
+1. In your Microsoft Entra organization, under **Manage**, select **Users**.
+    
+2. Select **+ New user**, select **Create new user** in the drop-down, and use the following values:
+    
+| Setting   | Value                                                                                                               |
+| --------- | ------------------------------------------------------------------------------------------------------------------- |
+| User name | balas                                                                                                               |
+| Name      | Bala Sandhu                                                                                                         |
+| Password  | Select the **Copy** icon next to the autogenerated password, then paste the password to a text editor like Notepad. |
+    
+3. Select the **Assignments** tab.
+    
+4. Select **Add group**, check the box for the **SSPRTesters** group, and then the **Select** button.
+    
+5. Select **Review + create** and then select **Create**.
+    
+
+## Enable SSPR
+
+Now, you're ready to enable SSPR for the group.
+
+1. In your Microsoft Entra organization, under **Manage**, select **Password reset**.
+    
+2. If the **Password reset** page still displays the message **Get a free Premium trial to use this feature**, wait for a few minutes and then refresh the page.
+    
+3. On the **Properties** page, select **Selected**. Select the **No groups selected** link, select the box next to the **SSPRTesters** group, and then the **Select** button.
+    
+4. Select **Save**.
+    
+    ![Screenshot of the Password Reset properties panel wwith SSPR enabled and selected group set to SSPRTesters.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/4-choose-sspr-group.png)
+    
+5. Under **Manage**, select the **Authentication methods**, **Registration**, and **Notifications** pages to review the default values.
+    
+6. Select **Customization**.
+    
+7. Select **Yes**, and then in the **Custom helpdesk email or URL** text box, enter **admin@organization-domain-name.onmicrosoft.com**. Replace "organization-domain-name" with the domain name of the Microsoft Entra organization you created. If you've forgotten the domain name, hover over your profile in the Azure portal.
+    
+8. Select **Save**.
+    
+
+## Register for SSPR
+
+Now that the SSPR configuration is complete, register a mobile phone number for the user you created.
+
+ Note
+
+If you get a message that says "The administrator has not enabled this feature," use private/incognito mode in your web browser.
+
+1. In a new browser window, go to [https://aka.ms/ssprsetup](https://aka.ms/ssprsetup).
+    
+2. Sign in with the user name **balas@organization-domain-name.onmicrosoft.com** and the password that you noted earlier. Remember to replace "organization-domain-name" with the domain name of the Microsoft Entra organization you created.
+    
+3. If you're asked to update your password, enter a new password of your choice. Make sure you note the new password.
+    
+4. Select the **Security info** tab, and then select **+ Add sign-in method**.
+    
+5. In the **Add a method** box, select **Phone**.
+    
+6. Enter your mobile phone details.
+    
+    ![Screenshot that shows mobile phone registration form for SSPR.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/4-register-mobile-phone.png)
+    
+7. Select the **Text me a code** radio button, and then select **Next**.
+    
+8. When you receive the code on your mobile phone, enter the code in the text box and select **Next**.
+    
+9. Select **Done**.
+    
+
+## Test SSPR
+
+Now, let's test whether the user can reset their password.
+
+1. In a new browser window, go to [https://aka.ms/sspr](https://aka.ms/sspr).
+    
+2. For **User ID**, type **balas@organization-domain-name.onmicrosoft.com**. Replace "organization-domain-name" with the domain you used for your Microsoft Entra organization.
+    
+    ![Screenshot that shows the password reset dialog.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/4-start-password-reset.png)
+    
+3. Complete the CAPTCHA and select **Next**.
+    
+4. Enter your mobile phone number, then select **Text**.
+    
+5. When the text arrives, in the **Enter your verification code** text box, enter the code you were sent. Select **Next**.
+    
+6. Enter a new password, and then select **Finish**. Make sure you note the new password.
+    
+7. Close the browser window.
+
+# Exercise - Customize directory branding
+
+Suppose you've been asked to display your retail organization's branding on the Azure sign-in page to reassure users that they're passing credentials to a legitimate system. Here, you'll learn how to configure this custom branding.
+
+To complete this exercise, you must have two image files:
+
+- A page background image. This must be a PNG or JPG file, 1920 x 1080 pixels, and smaller than 300 KB.
+- A company logo image. This must be a PNG or JPG file, 32 x 32 pixels, and smaller than 5 KB.
+
+## Customize Microsoft Entra organization branding
+
+Let's use Microsoft Entra ID to set up the custom branding.
+
+1. Sign in to the [Azure portal](https://portal.azure.com/).
+    
+2. Go to your Microsoft Entra organization by selecting **Microsoft Entra ID**. If you're not in the right Microsoft Entra organization, go to your Azure profile, and select **Switch directory** to find your organization.
+    
+3. Under **Manage**, select **Company branding**. Then select the **Customize** button in the center of the screen.
+    
+4. Next to **Favicon**, select **Browse**. Select your logo image.
+    
+5. Next to **Background image**, select **Browse**. Select your page background image.
+    
+6. Select a **Page background color** or accept the default.
+    
+    ![Screenshot that shows the configure company branding form.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/5-customize-ui.png)
+    
+7. Select **Review + Create**, and then select **Create**.
+    
+
+## Test the organization's branding
+
+Now, let's use the account that we created in the last exercise to test the branding.
+
+1. In a new browser window, go to [https://login.microsoft.com](https://login.microsoft.com/).
+    
+2. Select the account for **Bala Sandhu**. Your custom branding is displayed.
+    
+    ![Screenshot that shows the customized sign-in page.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/5-custom-login-page.png)
+    
+3. Select **Forgot my password**.
+    
+    ![Screenshot that shows organization logo on password reset page.](https://learn.microsoft.com/en-us/training/modules/allow-users-reset-their-password/media/5-forgot-password-branding.png)
+
+# Summary
+
+In this module, you've learned how you can use SSPR in Microsoft Entra ID to allow users to reset their forgotten or expired passwords. An administrator doesn't have to do the password reset. SSPR is secured by authentication methods of your choice. These methods can include a mobile authentication app, a code sent to you by an SMS text message, or security questions.
+
+SSPR helps reduce the amount of work required from administrators. It also minimizes the productivity impact for users when they forget their password.
+
+## Clean up
+
+Remember to clean up after you've finished.
+
+- **Delete the user you created in Microsoft Entra ID**: Go to **Microsoft Entra ID** > **Manage** > **Users**. Check the box next to the user and select **Delete**. Select **OK**.
+- **Delete the group you created in Microsoft Entra ID**: Go to **Microsoft Entra ID** > **Manage** > **Groups**. Check the box next to the group and select **Delete**. Select **OK**.
+- **Turn off self-service password reset**: Go to **Microsoft Entra ID** > **Manage** > **Password reset**. Under **Self service password reset enabled**, select **None**. Select **Save**.
+
+If you created a Premium trial Microsoft Entra tenant for this module, you can delete the tenant 30 days after the trial has expired.
+
+## Learn more
+
+- [Tutorial: Enable users to unlock their account or reset passwords using Microsoft Entra self-service password reset](https://learn.microsoft.com/en-us/entra/identity/authentication/tutorial-enable-sspr)
+- [How it works: Microsoft Entra self-service password reset](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-sspr-howitworks)
+- [Enable self-service password reset](https://learn.microsoft.com/en-us/entra/external-id/customers/how-to-enable-password-reset-customers)
+
+---
+
