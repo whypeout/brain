@@ -1433,3 +1433,2508 @@ The main takeaways from this module are:
     
 - [Load balance non-HTTP(S) traffic in Azure](https://learn.microsoft.com/en-us/training/modules/load-balancing-non-https-traffic-azure/). Learn the different load balancer options in Azure and how to choose and implement the right Azure solution for non-HTTP(S) traffic.
 
+---
+
+# Configure Azure Application Gateway
+
+
+# Introduction
+
+Azure Application Gateway is a load balancer for web traffic. Administrators implement an application gateway to manage traffic to their web apps.
+
+Suppose you work for the motor vehicle department of a governmental organization. The department runs several public websites that enable drivers to register their vehicles, and renew their licenses online. The vehicle registration website has been running on a single server, and has suffered multiple outages because of server failures. The outages have resulted in frustrated drivers trying to register their vehicles before their registrations expire.
+
+You're responsible for improving the resiliency of the site by adding multiple web servers to distribute the load. You want to centralize the site on a single load-balancing service, and simplify the URLs for site visitors. You're researching how to implement Azure Application Gateway.
+
+## Learning objectives
+
+In this module, you learn how to:
+
+- Identify features and usage cases for Azure Application Gateway.
+- Implement an Azure application gateway, including selecting a routing method.
+- Configure gateway components, such as listeners, health probes, and routing rules.
+
+## Skills measured
+
+The content in the module helps you prepare for [Exam AZ-104: Microsoft Azure Administrator](https://learn.microsoft.com/en-us/certifications/exams/az-104). The module concepts are covered in:
+
+Configure and manage virtual networking (25–30%)
+
+- Configure load balancing.
+    - Configure Azure Application Gateway.
+
+# Implement Azure Application Gateway
+
+Administrators use Azure Application Gateway to manage requests from client applications to their web apps. An application gateway listens for incoming traffic to web apps and checks for messages sent via protocols like HTTP. Gateway rules direct the traffic to resources in a back-end pool.
+
+#### Business scenario
+
+Consider a scenario where internet client applications request access to resources in a load-balanced back-end pool. The requests can be managed by implementing Azure Application Gateway to listen for HTTP(S) messages. Messages can be handled by load-balancing rules to direct client request traffic to the appropriate resources in the pool. The following diagram illustrates this scenario:
+
+![Diagram that illustrates how Azure Application Gateway manages requests from client applications to resources in a back-end pool, as described in the text.](https://learn.microsoft.com/en-us/training/wwl-azure/configure-azure-application-gateway/media/application-gateway-cb3392f4.png)
+
+### Things to know about Azure Application Gateway
+
+Let's examine some of the benefits of using Azure Application Gateway to manage internet traffic to your web applications.
+
+| Benefit                        | Description                                                                                                                                                                                                                                                                        |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Application layer routing**  | Use application layer routing to direct traffic to a back-end pool of web servers based on the URL of a request. The back-end pool can include Azure virtual machines, Azure Virtual Machine Scale Sets, Azure App Service, and even on-premises servers.                          |
+| **Round-robin load balancing** | Employ round-robin load balancing to distribute incoming traffic across multiple servers. Send load-balance requests to the servers in each back-end pool. Client requests are forwarded in a cycle through a group of servers to create an effective balance for the server load. |
+| **Session stickiness**         | Apply session stickiness to your application gateway to ensure client requests in the same session are routed to the same back-end server.                                                                                                                                         |
+| **Supported protocols**        | Build an application gateway to support the HTTP, HTTPS, HTTP/2, or WebSocket protocols.                                                                                                                                                                                           |
+| **Firewall protection**        | Implement a web application firewall to protect against web application vulnerabilities.                                                                                                                                                                                           |
+| **Encryption**                 | Support end-to-end request encryption for your web applications.                                                                                                                                                                                                                   |
+| **Load autoscaling**           | Dynamically adjust capacity as your web traffic load changes.                                                                                                                                                                                                                      |
+
+
+# Determine Azure Application Gateway routing
+
+Clients send requests to your web apps by specifying the IP address or DNS name of your application gateway. Your gateway directs the requests to a selected web server in your back-end pool according to a set of rules. You define the rules for your gateway to identify the allowable routes for the request traffic.
+
+### Things to know about traffic routing
+
+Let's take a closer look at your routing options for Azure Application Gateway.
+
+- Azure Application Gateway offers two primary methods for routing traffic:
+    
+    - **Path-based routing** sends requests with different URL paths to different pools of back-end servers.
+        
+    - **Multi-site routing** configures more than one web application on the same application gateway instance.
+        
+- You can configure your application gateway to **redirect** traffic.
+    
+    Application Gateway can redirect traffic received at one listener to another listener, or to an external site. This approach is commonly used by web apps to automatically redirect HTTP requests to communicate via HTTPS. The redirection ensures all communication between your web app and clients occurs over an encrypted path.
+    
+- You can implement Application Gateway to **rewrite HTTP headers**.
+    
+    HTTP headers allow the client and server to pass parameter information with the request or the response. In this scenario, you can translate URLs or query string parameters, and modify request and response headers. Add conditions to ensure URLs or headers are rewritten only for certain conditions.
+    
+- Application Gateway allows you to create custom error pages instead of displaying default error pages. You can use your own branding and layout by using a custom error page.
+    
+
+#### Path-based routing
+
+You can implement path-based routing to direct requests for specific URL paths to the appropriate back-end pool. Consider a scenario where your web app receives requests for videos or images. You can use path-based routing to direct requests for the `/video/\*` path to a back-end pool of servers that are optimized to handle video streaming. Image requests for the `/images/\*` path can be directed to a pool of servers that handle image retrieval. The following illustration demonstrates this routing method:
+
+![Diagram that shows a path-based routing approach.](https://learn.microsoft.com/en-us/training/wwl-azure/configure-azure-application-gateway/media/path-based-routing-15bcef5f.png)
+
+#### Multi-site routing
+
+When you need to support multiple web apps on the same application gateway instance, multi-site routing is the best option. Multi-site configurations are useful for supporting multi-tenant applications, where each tenant has its own set of virtual machines or other resources hosting a web application.
+
+In this configuration, you register multiple DNS names (CNAMEs) for the IP address of your application gateway and specify the name of each site. Application Gateway uses separate listeners to wait for requests for each site. Each listener passes the request to a different rule, which can route the requests to servers in a different back-end pool.
+
+Consider a scenario where you need to support traffic to two sites on the same gateway. You can direct all requests for the `http://contoso.com` site to servers in one back-end pool, and requests for the `http://fabrikam.com` site to another back-end pool. The following illustration demonstrates this routing method.
+
+![Diagram that shows a multiple site routing approach.](https://learn.microsoft.com/en-us/training/wwl-azure/configure-azure-application-gateway/media/site-based-routing-e686b605.png)
+
+# Configure Azure Application Gateway components
+
+Azure Application Gateway has a series of components that combine to route requests to a pool of web servers and to check the health of these web servers. These components include the frontend IP address, back-end pools, routing rules, health probes, and listeners. As an option, the gateway can also implement a firewall.
+
+### Things to know about Application Gateway components
+
+Let's explore how the components of an application gateway work together.
+
+- The **front-end IP address** receives the client requests.
+    
+- An optional **Web Application Firewall** checks incoming traffic for common threats before the requests reach the listeners.
+    
+- One or more **listeners** receive the traffic and route the requests to the back-end pool.
+    
+- **Routing rules** define how to analyze the request to direct the request to the appropriate back-end pool.
+    
+- A **back-end pool** contains web servers for resources like virtual machines or Virtual Machine Scale Sets. Each pool has a load balancer to distribute the workload across the resources.
+    
+- **Health probes** determine which back-end pool servers are available for load-balancing.
+    
+
+The following flowchart demonstrates how the Application Gateway components work together to direct traffic requests between the frontend and back-end pools in your configuration.
+
+![Flowchart that demonstrates how Application Gateway components direct traffic requests between the frontend and back-end pools.](https://learn.microsoft.com/en-us/training/wwl-azure/configure-azure-application-gateway/media/configure-app-gateway-0193dbd6.png)
+
+#### Front-end IP address
+
+Client requests are received through your front-end IP address. Your application gateway can have a public or private IP address, or both. You can have only one public IP address and only one private IP address.
+
+#### Web Application Firewall (optional)
+
+You can enable Azure Web Application Firewall for Azure Application Gateway to handle incoming requests before they reach your listener. The firewall checks each request for threats based on the Open Web Application Security Project (OWASP). Common threats include SQL-injection, cross-site scripting, command injection, HTTP request smuggling and response splitting, and remote file inclusion. Other threats can come from bots, crawlers, scanners, and HTTP protocol violations and anomalies.
+
+OWASP defines a set of generic rules for detecting attacks. These rules are referred to as the Core Rule Set (CRS). The rule sets are under continuous review as attacks evolve in sophistication. Azure Web Application Firewall supports two rule sets: CRS 2.2.9 and CRS 3.0. CRS 3.0 is the default and more recent of these rule sets. If necessary, you can opt to select only specific rules in a rule set to target certain threats. Additionally, you can customize the firewall to specify which elements in a request to examine, and limit the size of messages to prevent massive uploads from overwhelming your servers.
+
+#### Listeners
+
+Listeners accept traffic arriving on a specified combination of protocol, port, host, and IP address. Each listener routes requests to a back-end pool of servers according to your routing rules. A listener can be _Basic_ or _Multi-site_. A Basic listener only routes a request based on the path in the URL. A Multi-site listener can also route requests by using the hostname element of the URL. Listeners also handle TLS/SSL certificates for securing your application between the user and Application Gateway.
+
+#### Routing rules
+
+A routing rule binds your listeners to the back-end pools. A rule specifies how to interpret the hostname and path elements in the URL of a request, and then direct the request to the appropriate back-end pool. A routing rule also has an associated set of HTTP settings. These HTTP settings indicate whether (and how) traffic is encrypted between Application Gateway and the back-end servers. Other configuration information includes protocol, session stickiness, connection draining, request timeout period, and health probes.
+
+#### Back-end pools
+
+A back-end pool references a collection of web servers. You provide the IP address of each web server and the port on which it listens for requests when configuring the pool. Each pool can specify a fixed set of virtual machines, Virtual Machine Scale Sets, an app hosted by Azure App Services, or a collection of on-premises servers. Each back-end pool has an associated load balancer that distributes work across the pool.
+
+#### Health probes
+
+Health probes determine which servers in your back-end pool are available for load-balancing. Application Gateway uses a health probe to send a request to a server. When the server returns an HTTP response with a status code between 200 and 399, the server is considered healthy. If you don't configure a health probe, Application Gateway creates a default probe that waits for 30 seconds before identifying a server as unavailable (unhealthy).
+
+# Summary and resources
+
+Azure Application Gateway provides load balancing and application routing capabilities across multiple web sites. Several routing methods are available, including multi-site and path-based. Application Gateway also provides Azure Web Application Firewall to supply built-in security features.
+
+In this module, you identified features and usage cases for Azure Application Gateway. You explored Application Gateway components, including listeners, firewalls, health probes, and routing rules. You learned how to implement an application gateway, including selecting the appropriate routing method.
+
+## Learn more
+
+- Read about [Azure Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/overview).
+    
+- Examine [Application Gateway components](https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-components).
+    
+- Discover [Application Gateway features](https://learn.microsoft.com/en-us/azure/application-gateway/features).
+    
+- Read about [Azure Web Application Firewall on Application Gateway](https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/ag-overview).
+    
+- Explore [Application Gateway redirection routing](https://learn.microsoft.com/en-us/azure/application-gateway/redirect-overview).
+    
+- Configure an [application gateway to host multiple web sites](https://learn.microsoft.com/en-us/azure/application-gateway/create-multiple-sites-portal).
+    
+- Rewrite [HTTP headers and URL with Application Gateway](https://learn.microsoft.com/en-us/azure/application-gateway/rewrite-http-headers-url).
+    
+
+## Learn more with self-paced training
+
+- Complete an [introduction to Azure Application Gateway](https://learn.microsoft.com/en-us/training/modules/intro-to-azure-application-gateway/).
+
+## Learn more with optional hands-on exercises
+
+- Load balance [HTTP(S) traffic in Azure](https://learn.microsoft.com/en-us/training/modules/load-balancing-https-traffic-azure/). _Azure subscription required_.
+    
+- Load balance your [web service traffic with Azure Application Gateway](https://learn.microsoft.com/en-us/training/modules/load-balance-web-traffic-with-application-gateway/). _Azure subscription required_.
+    
+- Encrypt [network traffic end-to-end with Azure Application Gateway](https://learn.microsoft.com/en-us/training/modules/end-to-end-encryption-with-app-gateway/). _Azure subscription required_.
+
+---
+
+# Design an IP addressing schema for your Azure deployment
+
+# Introduction
+
+Imagine you're the solution architect for a manufacturing company. Your company is beginning a project to move many services out of its existing datacenter and into the Azure cloud. The company wants to integrate the existing network with Azure. You need to plan the public and private IP addresses for the network carefully so you don’t run out of addresses and have capacity for future growth. A good IP addressing scheme provides flexibility, room for growth, and integration with on-premises networks.
+
+In this module, you learn about the public and private IP addressing capabilities of Azure virtual networks. Also, you learn how to gather the necessary requirements for planning an IP address scheme. This module covers the on-premises integration methods of point-to-site and site-to-site, and also virtual network-to-virtual network peering. You also design and implement virtual networks and configure and verify virtual network peering. By the end of this module, you understand how to plan IP addressing for an Azure network and how to integrate Azure with an on-premises network.
+
+## Learning objectives
+
+In this module, you'll:
+
+- Identify the private IP addressing capabilities of Azure virtual networks.
+- Identify the public IP addressing capabilities of Azure.
+- Identify the requirements for IP addressing when integrating with on-premises networks.
+
+## Prerequisites
+
+- Knowledge of basic networking concepts, network subnets, and IP addressing
+- Familiarity with Azure virtual networking
+
+# Network IP addressing and integration
+
+
+To integrate resources in an Azure virtual network with resources in your on-premises network, you must understand how you can connect those resources and how to configure IP addresses.
+
+Your manufacturing company wants to migrate a business-critical database to Azure. Client applications on desktop computers, laptops, and mobile devices need constant access to the database as if the database remained in the on-premises network. You want to move the database server without affecting users.
+
+In this unit, you look at a typical on-premises network design and compare it to a typical Azure network design. You learn about requirements for IP addressing when integrating an Azure network with on-premises networks.
+
+## On-premises IP addressing
+
+A typical on-premises network design includes these components:
+
+- Routers
+- Firewalls
+- Switches
+- Network segmentation
+
+![Diagram of a typical on-premises network design.](https://learn.microsoft.com/en-us/training/modules/design-ip-addressing-for-azure/media/2-on-premises-network.png)
+
+The preceding diagram shows a simplified version of a typical on-premises network. On the routers facing the Internet Service Provider (ISP), you have public IP addresses that your outbound internet traffic uses as their source. These addresses also are used for inbound traffic across the internet. The internet service provider might issue you a block of IP addresses to assign to your devices. Or, you might have your own block of public IP addresses that your organization owns and controls. You can assign these addresses to systems that you would like to make accessible from the internet, such as web servers.
+
+The perimeter network and internal zone have private IP addresses. In the perimeter network and internal zone, the IP addresses that are assigned to these devices aren't accessible over the internet. The administrator has full control over the IP address assignment, name resolution, security settings, and security rules. There are three ranges of nonroutable IP addresses that are designed for internal networks that won't be sent over internet routers:
+
+- 10.0.0.0 to 10.255.255.255
+- 172.16.0.0 to 172.31.255.255
+- 192.168.0.0 to 192.168.255.255
+
+The administrator can add or remove on-premises subnets to accommodate network devices and services. The number of subnets and IP addresses you can have in your on-premises network depends on the Classless Inter-Domain Routing (CIDR) for the IP address block.
+
+## CIDR
+
+Classless Inter-Domain Routing (CIDR) is a method for allocating IP addresses and routing Internet Protocol packets. CIDR allows for more efficient use of IP address space by enabling the creation of variable-length subnet masks (VLSMs), which can allocate IP addresses in a more granular and flexible manner. This method helps to reduce the wastage of IP addresses and improves the scalability of the network. CIDR notation represents an IP address followed by a slash and a number; 192.168.0.0/24. The number indicates the length of the subnet mask.
+
+## Azure IP addressing
+
+Azure virtual networks use private IP addresses. The ranges of private IP addresses are the same as for on-premises IP addressing. Like on-premises networks, the administrator has full control over the IP address assignment, name resolution, security settings, and security rules in an Azure virtual network. The administrator can add or remove subnets depending on the CIDR for the IP address block.
+
+A typical Azure network design usually has these components:
+
+- Virtual networks
+- Subnets
+- Network security groups
+- Firewalls
+- Load balancers
+
+![Diagram of a typical Azure network design.](https://learn.microsoft.com/en-us/training/modules/design-ip-addressing-for-azure/media/2-azure-network.png)
+
+In Azure, the network design has features and functions that are similar to an on-premises network, but the network's structure is different. The Azure network doesn't follow the typical on-premises hierarchical network design. The Azure network allows you to scale up and scale down infrastructure based on demand. Provisioning in the Azure network happens in a matter of seconds. There are no hardware devices like routers or switches. The entire infrastructure is virtual, and you can slice it into chunks that suit your requirements.
+
+In Azure, you typically implement a network security group and a firewall. You use subnets to isolate front-end services, including web servers and Domain Name Systems (DNS), and back-end services like databases and storage systems. Network security groups filter internal and external traffic at the network layer. A firewall has more extensive capabilities for network-layer filtering and application-layer filtering. By deploying both network security groups and a firewall, you get improved isolation of resources for a secure network architecture.
+
+## Basic properties of Azure virtual networks
+
+A virtual network is your network in the cloud. You can divide your virtual network into multiple subnets. Each subnet contains a portion of the IP-address space assigned to your virtual network. You can add, remove, expand, or shrink a subnet if there are no VMs or services deployed in it.
+
+By default, all subnets in an Azure virtual network can communicate with each other. However, you can use a network security group to deny communication between subnets. Regarding sizing, the smallest supported subnet uses a /29 subnet mask, and the largest supported subnet uses a /2 subnet mask. The smallest subnet has eight IP addresses, and the largest subnet has 1,073,741,824 IP addresses.
+
+## Integrate Azure with on-premises networks
+
+Before you start integrating Azure with on-premises networks, it's important to identify the current private IP address scheme the on-premises network uses. There can be no IP address overlap for interconnected networks.
+
+For example, you can't use 192.168.0.0/16 on your on-premises network and use 192.168.10.0/24 on your Azure virtual network. These ranges both contain the same IP addresses so traffic can't be routed between them.
+
+You can, however, have the same class range for multiple networks. For example, you can use the 10.10.0.0/16 address space for your on-premises network and the 10.20.0.0/16 address space for your Azure network because they don't overlap.
+
+It's vital to check for overlaps when you're planning an IP address scheme. If there's an overlap of IP addresses, you can't integrate your on-premises network with your Azure network.
+
+# Public and private IP addressing in Azure
+
+You work for a manufacturing company, and you're moving resources into Azure. The database server must be accessible for clients in your on-premises network. Public resources—like web servers—must be accessible from the internet. You want to ensure that you plan IP addresses that support both these requirements.
+
+In this unit, you explore the constraints and limitations for public and private IP addresses in Azure. Also, you look at the capabilities that are available in Azure to reassign IP addresses in your network.
+
+## IP address types
+
+In Azure, you can use two types of IP addresses:
+
+- **Public IP addresses**
+- **Private IP addresses**
+
+You can allocate both types of IP addresses in one of two ways:
+
+- **Dynamic**
+- **Static**
+
+Let's take a closer look at how the IP address types work together.
+
+## Public IP addresses
+
+Use a public IP address for public-facing services. A public address can be either static or dynamic. A public IP address can be assigned to a virtual machine (VM), an internet-facing load balancer, a VPN gateway, or an application gateway.
+
+- **Dynamic public IP addresses** are assigned addresses that can change over the lifespan of the Azure resource. The dynamic IP address is allocated when you create or start a VM. The IP address is released when you stop or delete the VM. In each Azure region, public IP addresses are assigned from a unique pool of addresses. The default allocation method is dynamic.
+    
+- **Static public IP addresses** are assigned addresses that don't change over the lifespan of the Azure resource. To ensure that the IP address for the resource remains the same, you can set the allocation method to static. In this case, an IP address is assigned immediately, and is released only when you delete the resource or change the IP allocation method to dynamic.
+    
+
+### SKUs for public IP addresses
+
+For public IP addresses, there are two SKUs from which to choose: **Basic** and **Standard**. All public IP addresses created before the introduction of SKUs are Basic SKU public IP addresses. With the introduction of SKUs, you can choose the scale, features, and pricing for load balancing internet traffic.
+
+Both Basic and Standard SKUs have by default:
+
+- An inbound originated flow idle timeout of four minutes, which is adjustable to up to 30 minutes.
+- A fixed outbound originated flow idle timeout of four minutes.
+
+#### Basic SKU
+
+You can assign Basic public IPs by using static or dynamic allocation methods. You can assign Basic public IPs to any Azure resource that can be assigned a public IP address. Including network interfaces, VPN gateways, application gateways, and internet-facing load balancers.
+
+By default, Basic SKU IP addresses:
+
+- Are open. Network security groups are recommended, but optional, for restricting inbound or outbound traffic.
+- Are available for inbound only traffic.
+- Are available when using instance meta data service (IMDS).
+- Don't support Availability Zones.
+- Don't support routing preferences.
+
+#### Standard SKU
+
+By default, Standard SKU IP addresses:
+
+- Always use static allocation.
+- Are secure, and thus closed to inbound traffic. You must enable inbound traffic by using a network security group.
+- Are zone-redundant and optionally zonal (they can be created as zonal and guaranteed in a specific availability zone).
+- Can be assigned to network interfaces, Standard public load balancers, application gateways, or VPN gateways.
+- Can be utilized with the routing preference to enable more granular control of how traffic is routed between Azure and the Internet.
+- Can be used as anycast frontend IPs for cross-region load balancers.
+
+For more information, see [SKU comparison](https://learn.microsoft.com/en-us/azure/load-balancer/skus), Load Balancer [overview](https://learn.microsoft.com/en-us/azure/load-balancer/load-balancer-overview), and [components](https://learn.microsoft.com/en-us/azure/load-balancer/components).
+
+### Public IP address prefix
+
+In Azure, a _public IP address prefix_ is a reserved, static range of public IP addresses. Azure assigns an IP address from a pool of available addresses that's unique to each region in each Azure cloud. When you define a Public IP address prefix, associated public IP addresses are assigned from a pool for an Azure region.
+
+In a region with Availability Zones, Public IP address prefixes can be created as zone-redundant or associated with a specific availability zone.
+
+The benefit of a public IP address prefix is that you can specify firewall rules for a known range of IP addresses. If your business needs to have datacenters in different regions, you need a different public IP address range for each region. You can assign the addresses from a public IP address prefix to any Azure resource that supports public IP addresses.
+
+You can create a public IP address prefix by specifying a name and prefix size. The prefix size is the number of reserved addresses available for use.
+
+- Public IP address prefixes consist of IPv4 or IPv6 addresses.
+- You can use technology like Azure Traffic Manager to balance region-specific instances.
+- You can only bring your own public IP addresses from on-premises networks into Azure by using a [Custom IP address prefix](https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/custom-ip-address-prefix).
+- You can't specify addresses when you create a prefix; Azure assigns them. After a prefix is created, the IP addresses are fixed in a contiguous range.
+- Public IP addresses can't be moved between regions; all IP addresses are region-specific.
+
+## Private IP addresses
+
+Private IP addresses are used for communication within an Azure Virtual Network, including virtual networks and your on-premises networks. You can set private IP addresses to dynamic (DHCP lease) or static (DHCP reservation).
+
+**Dynamic private IP addresses** are assigned through a DHCP lease and can change over the lifespan of the Azure resource.
+
+**Static private IP addresses** are assigned through a DHCP reservation and don't change throughout the lifespan of the Azure resource. Static private IP addresses persist if a resource is stopped or deallocated.
+
+## IP addressing for Azure virtual networks
+
+In Azure, a virtual network is a fundamental component that acts as an organization's network. The administrator has full control over IP address assignment, security settings, and security rules. When you create a virtual network, you define a scope of IP addresses. Private IP addressing works the same way as it does in an on-premises network. You choose the private IP addresses that the Internet Assigned Numbers Authority (IANA) reserves based on your network requirements:
+
+- 10.0.0.0/8
+- 172.16.0.0/12
+- 192.168.0.0/16
+
+A subnet is a range of IP address within the virtual network. You can divide a virtual network into multiple subnets. Each subnet must have a unique address range, which is specified in classless interdomain routing (CIDR) format. CIDR is a way to represent a block of network IP addresses. An IPv4 CIDR, specified as part of the IP address, shows the length of the network prefix.
+
+Consider, for example, CIDR 192.168.10.0/24. "192.168.10.0" is the network address, and "24" indicates that the first 24 bits are part of the network address, leaving the last 8 bits for specific host addresses. A subnet's address range can't overlap with other subnets in the virtual network or with the on-premises network.
+
+For all subnets in Azure, the first three IP addresses are reserved by default. For protocol conformance, the first and last IP addresses of all subnets also are reserved. In Azure, an internal DHCP service assigns and maintains the lease of IP addresses. The `.1`, `.2`, `.3`, and last IP addresses aren't visible or configurable by the Azure customer. These addresses are reserved and used by internal Azure services.
+
+In Azure virtual networks, IP addresses can be allocated to the following types of resources:
+
+- Virtual machine network interfaces
+- Load balancers
+- Application gateways
+
+# Plan IP addressing for your networks
+
+
+In your manufacturing company, you asked the operations and engineering teams about their requirements for the number of virtual machines in Azure. Also, you asked them about their plans for expansion. Based on the results of this survey, you want to plan an IP addressing scheme that you won't have to change in the foreseeable future.
+
+In this unit, you explore the requirements for a network IP address scheme. You learn about classless inter-domain routing (CIDR) and how you can use it to slice an IP block to meet your addressing needs. In the next unit, there's an exercise that shows how to plan IP addressing for Azure virtual networks.
+
+## Gather your requirements
+
+Before planning your network IP address scheme, you must gather the requirements for your infrastructure. These requirements also help you prepare for future growth by reserving extra IP addresses and subnets.
+
+Here are two of the questions you might ask to discover the requirements:
+
+- How many devices do you have on the network?
+- How many devices are you planning to add to the network in the future?
+
+When your network expands, you don't want to redesign the IP address scheme. Here are some other questions you could ask:
+
+- Based on the services running on the infrastructure, what devices do you need to separate?
+- How many subnets do you need?
+- How many devices per subnet do you have?
+- How many devices are you planning to add to the subnets in future?
+- Are all subnets going to be the same size?
+- How many subnets do you want or plan to add in future?
+
+You need to isolate some services. Isolating services provides another layer of security, but also requires good planning. For example, public devices can access your front-end servers, but the back-end servers need to be isolated. Subnets help isolate the network in Azure. However, all subnets within a virtual network can communicate with each other in Azure by default. To provide further isolation, you can use a network security group. You might isolate services depending on the data and its security requirements. For example, you might choose to isolate HR data and the company's financial data from customer databases.
+
+When you know the requirements, you have a greater understanding of the total number of devices on the network per subnet and how many subnets you need. CIDR allows more flexible allocation of IP addresses than was possible with the original system of IP address classes. Depending on your requirements, you determine the required subnets and hosts out of the block of IP Addresses.
+
+Remember that Azure uses the first three addresses on each subnet. The subnets' first and last IP addresses also are reserved for protocol conformance. Therefore, the number of possible addresses on an Azure subnet is **(2^n)-5**, where **n** represents the number of host bits.
+
+# Summary
+
+
+In this module, you have:
+
+- Identified the private and public IP addressing capabilities of Azure virtual networks.
+- Identified how to integrate on-premises networks with Azure.
+- Planned an IP address scheme for your Azure infrastructure and created virtual networks.
+
+Now that you understand how to plan IP addressing for Azure networks, you understand the private and public IP addressing capabilities of Azure virtual networks. You can use this information to plan out the IP addressing for your own Azure infrastructure.
+
+## Learn more
+
+For more information about IP addressing in Azure, see the following articles:
+
+- [Public IP addresses](https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/public-ip-addresses)
+- [Public IP address prefix](https://learn.microsoft.com/en-us/azure/virtual-network/public-ip-address-prefix)
+
+---
+
+# Distribute your services across Azure virtual networks and integrate them by using virtual network peering
+
+# Introduction
+
+Imagine you're the solution architect for an engineering company that has been migrating services into Azure. The company deployed services into separate virtual networks, but has yet to configure private connectivity between them.
+
+Several business units identified services in these virtual networks that need to communicate with each other. You need to enable this connectivity, but you don't want to expose these services to the internet. You also want to keep the integration as simple as possible.
+
+In this module, you learn about virtual network connection options and why virtual network peering is suited for this scenario. You create three virtual networks and configure virtual network peering between them. You then test your configuration to make sure it meets your connectivity goals.
+
+## Learning objectives
+
+In this module, you'll:
+
+- Identify use cases for virtual network peering.
+- Identify the features and limitations of virtual network peering.
+- Configure peering connections between virtual networks.
+
+# Connect services by using virtual network peering
+
+
+You can use virtual network peering to directly connect Azure virtual networks together. When you use peering to connect virtual networks, virtual machines (VMs) in these networks can communicate with each other as if they're in the same network.
+
+With peered virtual networks, traffic between virtual machines is routed through the Azure network. The traffic uses only private IP addresses. It doesn't rely on internet connectivity, gateways, or encrypted connections. The traffic is always private, and it takes advantage of the high bandwidth and low latency of the Azure backbone network.
+
+![A basic diagram of two virtual networks that are connected by virtual network peering.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/2-vnet-peering.svg)
+
+The two types of peering connections are created in the same way:
+
+- **Virtual network peering** connects virtual networks in the same Azure region, such as two virtual networks in North Europe.
+- **Global virtual network peering** connects virtual networks that are in different Azure regions, such as a virtual network in North Europe and a virtual network in West Europe.
+
+Virtual network peering doesn't affect or disrupt any resources that are already deployed to your virtual networks. When you use virtual network peering, consider the key features defined in the following sections.
+
+## Reciprocal connections
+
+When you create a virtual network peering connection with Azure PowerShell or Azure CLI, only one side of the peering gets created. To complete the virtual network peering configuration, you need to configure the peering in the reverse direction to establish connectivity. When you create the virtual network peering connection through the Azure portal, the configuration for both sides is completed at the same time.
+
+Think of how you connect two network switches together. You might connect a cable to each switch and maybe configure some settings so that the switches can communicate. Virtual network peering requires similar connections in each virtual network. Reciprocal connections provide this functionality.
+
+## Cross-subscription virtual network peering
+
+You can use virtual network peering even when both virtual networks are in different subscriptions. This setup might be necessary for mergers and acquisitions, or to connect virtual networks in subscriptions that different departments manage. Virtual networks can be in different subscriptions, and the subscriptions can use the same or different Microsoft Entra tenants.
+
+When you use virtual network peering across subscriptions, you might find that an administrator of one subscription doesn't administer the peer network's subscription. The administrator might not be able to configure both ends of the connection. To peer the virtual networks when both subscriptions are in different Microsoft Entra tenants, the administrators of each subscription must grant the peer subscription's administrator the `Network Contributor` role on their virtual network.
+
+## Transitivity
+
+Virtual network peering is nontransitive. Only virtual networks that are directly peered can communicate with each other. Virtual networks can't communicate with peers of their peers.
+
+Suppose, for example, that your three virtual networks (A, B, C) are peered like this: A <-> B <-> C. Resources in A can't communicate with resources in C because that traffic can't transit through virtual network B. If you need communication between virtual network A and virtual network C, you must explicitly peer these two virtual networks.
+
+## Gateway transit
+
+You can connect to your on-premises network from a peered virtual network if you enable gateway transit from a virtual network that has a VPN gateway. Using gateway transit, you can enable on-premises connectivity without deploying virtual network gateways to all your virtual networks. This method can reduce the overall cost and complexity of your network. By using virtual network peering with gateway transit, you can configure a single virtual network as a hub network. Connect this hub network to your on-premises datacenter and share its virtual network gateway with peers.
+
+To enable gateway transit, configure the **Allow gateway transit** option in the hub virtual network where the gateway connection to your on-premises network is deployed. Also configure the **Use remote gateways** option in any spoke virtual networks.
+
+ Note
+
+If you want to enable the **Use remote gateways** option in a spoke network peering, you can't deploy a virtual network gateway in the spoke virtual network.
+
+## Overlapping address spaces
+
+IP address spaces of connected networks within Azure and between Azure and your on-premises network, can't overlap. This rule is also true for peered virtual networks. Keep this rule in mind when you're planning your network design. In any networks you connect through virtual network peering, VPN, or ExpressRoute, assign different address spaces that don't overlap.
+
+![Diagram of a comparison of overlapping and nonoverlapping network addressing.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/2-non-overlapping-networks.svg)
+
+## Alternative connectivity methods
+
+Virtual network peering is the least complex way to connect virtual networks together. Other methods focus primarily on connectivity between on-premises and Azure networks rather than connections between virtual networks.
+
+You can also connect virtual networks together through an ExpressRoute circuit. ExpressRoute is a dedicated, private connection between an on-premises datacenter and the Azure backbone network. The virtual networks that connect to an ExpressRoute circuit are part of the same routing domain and can communicate with each other. ExpressRoute connections don't go over the public internet, so your communications with Azure services are as secure as possible.
+
+VPNs use the internet to connect your on-premises datacenter to the Azure backbone through an encrypted tunnel. You can use a site-to-site configuration to connect virtual networks together through VPN gateways. VPN gateways have higher latency than virtual network peering setups. They're more complex and can cost more to manage.
+
+When virtual networks are connected through both a gateway and virtual network peering, traffic flows through the peering configuration.
+
+## When to choose virtual network peering
+
+Virtual network peering can be a great way to enable network connectivity between services that are in different virtual networks. Virtual network peering should be your first choice when you need to integrate Azure virtual networks. It's easy to implement and deploy, and it works well across regions and subscriptions.
+
+Peering might not be your best option if you have [existing VPN or ExpressRoute](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview#service-chaining) connections or services behind Azure Basic Load Balancers that would be accessed from a peered virtual network. In these cases, you should research alternatives.
+
+
+# Exercise - Prepare virtual networks for peering by using Azure CLI commands
+
+Let's say your company is now ready to implement virtual network peering. You want to connect systems that are deployed in different virtual networks. To test this plan, you start by creating virtual networks to support the services your company is already running in Azure. You need three virtual networks:
+
+- The **Sales** virtual network is deployed in **North Europe**. Sales systems use this virtual network to process the data added after a customer is engaged. The Sales team wants access to Marketing data.
+- The **Marketing** virtual network is deployed in **North Europe**. Marketing systems use this virtual network. Members of the Marketing team regularly chat with the Sales team. To share their data with the Sales team, they must download it because the Sales and Marketing systems aren't connected.
+- The **Research** virtual network is deployed in **West Europe**. Research systems use this virtual network. Members of the Research team have a logical working relationship with Marketing, but they don't want the Sales team to have direct access to their data.
+
+![A diagram of virtual networks you need to create.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/3-prepare-vnets.svg)
+
+You're going to create the following resources:
+
+Expand table
+
+|Virtual network|Region|Virtual network address space|Subnet|Subnet address space|
+|---|---|---|---|---|
+|SalesVNet|North Europe|10.1.0.0/16|Apps|10.1.1.0/24|
+|MarketingVNet|North Europe|10.2.0.0/16|Apps|10.2.1.0/24|
+|ResearchVNet|West Europe|10.3.0.0/16|Data|10.3.1.0/24|
+
+## Create the virtual networks
+
+1. In Cloud Shell, run the following command to create the virtual network and subnet for the **Sales** systems:
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet create \
+        --resource-group "[sandbox resource group name]" \
+        --name SalesVNet \
+        --address-prefixes 10.1.0.0/16 \
+        --subnet-name Apps \
+        --subnet-prefixes 10.1.1.0/24 \
+        --location northeurope
+    ```
+    
+2. Run the following command to create the virtual network and subnet for the **Marketing** systems:
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet create \
+        --resource-group "[sandbox resource group name]" \
+        --name MarketingVNet \
+        --address-prefixes 10.2.0.0/16 \
+        --subnet-name Apps \
+        --subnet-prefixes 10.2.1.0/24 \
+        --location northeurope
+    ```
+    
+3. Run the following command to create the virtual network and subnet for the **Research** systems:
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet create \
+        --resource-group "[sandbox resource group name]" \
+        --name ResearchVNet \
+        --address-prefixes 10.3.0.0/16 \
+        --subnet-name Data \
+        --subnet-prefixes 10.3.1.0/24 \
+        --location westeurope
+    ```
+    
+
+## Confirm the virtual network configuration
+
+Let's take a quick look at what you created.
+
+1. View the virtual networks you've created by running the following command in Cloud Shell:
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet list --query "[?contains(provisioningState, 'Succeeded')]" --output table
+    ```
+    
+2. Your output should look like this example:
+    
+    OutputCopy
+    
+    ```
+    Location     Name           EnableDdosProtection    ProvisioningState    ResourceGuid                          ResourceGroup
+    -----------  -------------  ----------------------  -------------------  ------------------------------------  ------------------------------------------
+    westeurope   ResearchVNet   False                   Succeeded            9fe09fe0-d6cd-4043-aba8-b5e850a91251  learn-cb081b92-bc67-49cf-a965-1aeb40a2e25c
+    northeurope  SalesVNet      False                   Succeeded            8f030706-cce4-4a7b-8da2-a9f738887ffd  learn-cb081b92-bc67-49cf-a965-1aeb40a2e25c
+    northeurope  MarketingVNet  False                   Succeeded            ffbf8430-b0eb-4c3d-aa94-3b3156b90bed  learn-cb081b92-bc67-49cf-a965-1aeb40a2e25c
+    ```
+    
+
+## Create virtual machines in each virtual network
+
+Now, you deploy some Ubuntu virtual machines (VMs) in each of the virtual networks. These VMs simulate the services in each virtual network. In the final unit of this module, you use these VMs to test connectivity between the virtual networks.
+
+1. In Cloud Shell, run the following command, replacing `<password>` with a password that meets the [requirements for Linux VMs](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/faq#what-are-the-password-requirements-when-creating-a-vm), to create an Ubuntu virtual machine (VM) in the **Apps** subnet of **SalesVNet**. Note this password for later use.
+    
+    Azure CLICopy
+    
+    ```
+    az vm create \
+        --resource-group "[sandbox resource group name]" \
+        --no-wait \
+        --name SalesVM \
+        --location northeurope \
+        --vnet-name SalesVNet \
+        --subnet Apps \
+        --image Ubuntu2204 \
+        --admin-username azureuser \
+        --admin-password <password>
+    ```
+    
+     Note
+    
+    The `--no-wait` parameter in this command lets you continue working in Cloud Shell while the VM is building.
+    
+2. Run the following command, replacing `<password>` with a password that meets the [requirements for Linux VMs](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/faq#what-are-the-password-requirements-when-creating-a-vm), to create another Ubuntu VM in the **Apps** subnet of **MarketingVNet**. Note this password for later use. The VM might take a minute or two to be created.
+    
+    Azure CLICopy
+    
+    ```
+    az vm create \
+        --resource-group "[sandbox resource group name]" \
+        --no-wait \
+        --name MarketingVM \
+        --location northeurope \
+        --vnet-name MarketingVNet \
+        --subnet Apps \
+        --image Ubuntu2204 \
+        --admin-username azureuser \
+        --admin-password <password>
+    ```
+    
+3. Run the following command, replacing `<password>` with a password that meets the [requirements for Linux VMs](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/faq#what-are-the-password-requirements-when-creating-a-vm), to create an Ubuntu VM in the **Data** subnet of **ResearchVNet**. Note this password for later use.
+    
+    Azure CLICopy
+    
+    ```
+    az vm create \
+        --resource-group "[sandbox resource group name]" \
+        --no-wait \
+        --name ResearchVM \
+        --location westeurope \
+        --vnet-name ResearchVNet \
+        --subnet Data \
+        --image Ubuntu2204 \
+        --admin-username azureuser \
+        --admin-password <password>
+    ```
+    
+    The VMs might take several minutes to reach a running state.
+    
+4. To confirm that the VMs are running, run the following command. The Linux `watch` command is configured to refresh every five seconds.
+    
+    BashCopy
+    
+    ```
+    watch -d -n 5 "az vm list \
+        --resource-group "[sandbox resource group name]" \
+        --show-details \
+        --query '[*].{Name:name, ProvisioningState:provisioningState, PowerState:powerState}' \
+        --output table"
+    ```
+    
+    A **ProvisioningState** of **Succeeded** and a **PowerState** of **VM running** indicates a successful deployment for the VM.
+    
+5. When your VMs are running, you're ready to move on. Press `Ctrl-c` to stop the command and continue on with the exercise.
+# Exercise - Configure virtual network peering connections by using Azure CLI commands
+
+You created virtual networks and ran virtual machines (VMs) within them. However, the virtual networks have no connectivity, and none of these systems can communicate with each other.
+
+To enable communication, you need to create peering connections for the virtual networks. To satisfy your company's requirements, you configure a hub and spoke topology and permit virtual network access when you create the peering connections.
+
+## Create virtual network peering connections
+
+Follow these steps to create connections between the virtual networks and to configure the behavior of each connection.
+
+1. In Cloud Shell, run the following command to create the peering connection between the **SalesVNet** and **MarketingVNet** virtual networks. This command also permits virtual network access across this peering connection.
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet peering create \
+        --name SalesVNet-To-MarketingVNet \
+        --remote-vnet MarketingVNet \
+        --resource-group "[sandbox resource group name]" \
+        --vnet-name SalesVNet \
+        --allow-vnet-access
+    ```
+    
+2. Run the following command to create a reciprocal connection from **MarketingVNet** to **SalesVNet**. This step completes the connection between these virtual networks.
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet peering create \
+        --name MarketingVNet-To-SalesVNet \
+        --remote-vnet SalesVNet \
+        --resource-group "[sandbox resource group name]" \
+        --vnet-name MarketingVNet \
+        --allow-vnet-access
+    ```
+    
+
+Now that you have connections between Sales and Marketing, create connections between Marketing and Research.
+
+1. In Cloud Shell, run the following command to create the peering connection between the **MarketingVNet** and **ResearchVNet** virtual networks:
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet peering create \
+        --name MarketingVNet-To-ResearchVNet \
+        --remote-vnet ResearchVNet \
+        --resource-group "[sandbox resource group name]" \
+        --vnet-name MarketingVNet \
+        --allow-vnet-access
+    ```
+    
+2. Run the following command to create the reciprocal connection between **ResearchVNet** and **MarketingVNet**:
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet peering create \
+        --name ResearchVNet-To-MarketingVNet \
+        --remote-vnet MarketingVNet \
+        --resource-group "[sandbox resource group name]" \
+        --vnet-name ResearchVNet \
+        --allow-vnet-access
+    ```
+    
+
+## Check the virtual network peering connections
+
+Now that the peering connections between the virtual networks are created, make sure the connections work.
+
+1. In Cloud Shell, run the following command to check the connection between **SalesVNet** and **MarketingVNet**:
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet peering list \
+        --resource-group "[sandbox resource group name]" \
+        --vnet-name SalesVNet \
+        --query "[].{Name:name, Resource:resourceGroup, PeeringState:peeringState, AllowVnetAccess:allowVirtualNetworkAccess}"\
+        --output table
+    ```
+    
+2. You created only one connection from **SalesVNet**, so you get only one result. In the **PeeringState** column, make sure the status is **Connected**.
+    
+3. Run the following command to check the peering connection between the **ResearchVNet** and **MarketingVNet** virtual networks:
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet peering list \
+        --resource-group "[sandbox resource group name]" \
+        --vnet-name ResearchVNet \
+        --query "[].{Name:name, Resource:resourceGroup, PeeringState:peeringState, AllowVnetAccess:allowVirtualNetworkAccess}"\
+        --output table
+    ```
+    
+4. Again, you created only one connection from **ResearchVNet**, so you get only one result. In the **PeeringState** column, make sure the status is **Connected**.
+    
+5. Run the following command to check the peering connections for the **MarketingVNet** virtual network.
+    
+    Azure CLICopy
+    
+    ```
+    az network vnet peering list \
+        --resource-group "[sandbox resource group name]" \
+        --vnet-name MarketingVNet \
+        --query "[].{Name:name, Resource:resourceGroup, PeeringState:peeringState, AllowVnetAccess:allowVirtualNetworkAccess}"\
+        --output table
+    ```
+    
+    Remember that you created connections from Marketing to Sales and from Marketing to Research, so you should get two connections. In the **PeeringState** column, make sure the status of both connections is **Connected**.
+    
+
+Your peering connections between the virtual networks should now look like this diagram:
+
+![Diagram of the resulting virtual network peering connections.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/4-vnet-peering-configure-connections-result.svg)
+
+## Check effective routes
+
+You can further check the peering connection by looking at the routes that apply to the network interfaces of the VMs.
+
+1. Run the following command to look at the routes that apply to the **SalesVM** network interface:
+    
+    Azure CLICopy
+    
+    ```
+    az network nic show-effective-route-table \
+        --resource-group "[sandbox resource group name]" \
+        --name SalesVMVMNic \
+        --output table
+    ```
+    
+    The output table shows the effective routes for the virtual machine's network interface. For **SalesVMVMNic**, you should have a route to **10.2.0.0/16** with _Next Hop Type_ of **VNetPeering**. This network route is for the peering connection from **SalesVNet** to **MarketingVNet**.
+    
+    OutputCopy
+    
+    ```
+    Source    State    Address Prefix    Next Hop Type    Next Hop IP
+    --------  -------  ----------------  ---------------  -------------
+    Default   Active   10.1.0.0/16       VnetLocal
+    Default   Active   10.2.0.0/16       VNetPeering
+    Default   Active   0.0.0.0/0         Internet
+    Default   Active   10.0.0.0/8        None
+    Default   Active   100.64.0.0/10     None
+    Default   Active   192.168.0.0/16    None
+    ```
+    
+2. Run the following command to look at the routes for **MarketingVM**:
+    
+    Azure CLICopy
+    
+    ```
+    az network nic show-effective-route-table \
+        --resource-group "[sandbox resource group name]" \
+        --name MarketingVMVMNic \
+        --output table
+    ```
+    
+    The output table shows the effective routes for the virtual machine's network interface. For **MarketingVMVMNic**, you should have a route to **10.1.0.0/16** with a next hop type of **VNetPeering** and a route to **10.3.0.0/16** with a next hop type of **VNetGlobalPeering**. These network routes are for the peering connection from **MarketingVNet** to **SalesVNet** and from **MarketingVNet** to **ResearchVNet**.
+    
+    OutputCopy
+    
+    ```
+    Source    State    Address Prefix    Next Hop Type      Next Hop IP
+    --------  -------  ----------------  -----------------  -------------
+    Default   Active   10.2.0.0/16       VnetLocal
+    Default   Active   10.1.0.0/16       VNetPeering
+    Default   Active   0.0.0.0/0         Internet
+    Default   Active   10.0.0.0/8        None
+    Default   Active   100.64.0.0/10     None
+    Default   Active   192.168.0.0/16    None
+    Default   Active   10.3.0.0/16       VNetGlobalPeering
+    ```
+    
+3. Run the following command to look at the routes for **ResearchVM**:
+    
+    Azure CLICopy
+    
+    ```
+    az network nic show-effective-route-table \
+        --resource-group "[sandbox resource group name]" \
+        --name ResearchVMVMNic \
+        --output table
+    ```
+    
+    The output table shows the effective routes for the virtual machine's network interface. For **ResearchVMVMNic**, you should have a route to **10.2.0.0/16** with a next hop type of **VNetGlobalPeering**. This network route is for the peering connection from **ResearchVNet** to **MarketingVNet**.
+    
+    OutputCopy
+    
+    ```
+    Source    State    Address Prefix    Next Hop Type      Next Hop IP
+    --------  -------  ----------------  -----------------  -------------
+    Default   Active   10.3.0.0/16       VnetLocal
+    Default   Active   0.0.0.0/0         Internet
+    Default   Active   10.0.0.0/8        None
+    Default   Active   100.64.0.0/10     None
+    Default   Active   192.168.0.0/16    None
+    Default   Active   10.2.0.0/16       VNetGlobalPeering
+    ```
+    
+
+Now that your peering connections are configured, let's take a look at how these connections affect the communication between VMs.
+
+# Exercise - Verify virtual network peering by using SSH between Azure virtual machines
+
+In the previous unit, you configured peering connections between the virtual networks to enable resources to communicate with each other. Your configuration used a hub and spoke topology. **MarketingVNet** was the hub, and **SalesVNet** and **ResearchVNet** were spokes.
+
+![Diagram of a hub and spoke topology for virtual networks.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/5-hub-spoke-network.svg)
+
+Remember, peering connections are nontransitive. Intermediate virtual networks don't allow connectivity to flow through them to connected virtual networks. **SalesVNet** can communicate with **MarketingVNet**. **ResearchVNet** can communicate with **MarketingVNet**. **MarketingVNet** can communicate with both **SalesVNet** and **ResearchVNet**. The only communication that isn't permitted is between **SalesVNet** and **ResearchVNet**. Even though **SalesVNet** and **ResearchVNet** are both connected to **MarketingVNet**, they can't communicate with each other because they're not directly peered to each other.
+
+Let's confirm the connectivity across the peering connections. First, you create a connection from Azure Cloud Shell to the _public_ IP address of a target virtual machine (VM). Then you connect from the target VM to the destination VM by using the destination VM's _private_ IP address.
+
+ Important
+
+To test the virtual network peering connection, connect to the private IP address assigned to each VM.
+
+1. Connect to your VMs by using SSH (Secure Shell) directly from Cloud Shell. When using SSH, you first find the public IP addresses that are assigned to your test VMs.
+    
+2. Run the following command in Cloud Shell to list the IP addresses you use to connect to the VMs:
+    
+    Azure CLICopy
+    
+    ```
+    az vm list \
+        --resource-group "[sandbox resource group name]" \
+        --query "[*].{Name:name, PrivateIP:privateIps, PublicIP:publicIps}" \
+        --show-details \
+        --output table
+    ```
+    
+3. Record the output. You need the IP addresses for the exercises in this unit.
+    
+
+Before you start the tests, think about what you learned in this module. What results do you expect? Which VMs are able to communicate with each other, and which ones aren't?
+
+## Test connections from SalesVM
+
+In the first test, you use SSH in Cloud Shell to connect to the public IP address of **SalesVM**. You then attempt to connect from **SalesVM** to **MarketingVM** and **ResearchVM**.
+
+1. In Cloud Shell, run the following command, using SSH to connect to the public IP address of **SalesVM**. In the command, replace `<SalesVM public IP>` with the VM's _public_ IP address.
+    
+    BashCopy
+    
+    ```
+    ssh -o StrictHostKeyChecking=no azureuser@<SalesVM public IP>
+    ```
+    
+    ![A diagram showing connection to the public IP address of SalesVM.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/5-sales-step-1.svg)
+    
+2. Sign in with the password that you used to create the VM. The prompt now shows that you're signed in to **SalesVM**.
+    
+3. In Cloud Shell, run the following command, using SSH to connect to the private IP address of **MarketingVM**. In the command, replace `<MarketingVM private IP>` with this VM's _private_ IP address.
+    
+    BashCopy
+    
+    ```
+    ssh -o StrictHostKeyChecking=no azureuser@<MarketingVM private IP>
+    ```
+    
+    ![Diagram showing connection from SalesVM to the private IP address of MarketingVM.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/5-sales-step-5.svg)
+    
+    The connection attempt should succeed because of the peering connection between the **SalesVNet** and **MarketingVNet** virtual networks.
+    
+4. Sign in by using the password you used to create the VM.
+    
+5. Enter `exit` to close this SSH session and return to the **SalesVM** prompt.
+    
+6. In Cloud Shell, run the following command, using SSH to connect to the private IP address of **ResearchVM**. In the command, replace `<ResearchVM private IP>` with this VM's _private_ IP address.
+    
+    BashCopy
+    
+    ```
+    ssh -o StrictHostKeyChecking=no azureuser@<ResearchVM private IP>
+    ```
+    
+7. The connection attempt should fail because there's no peering connection between the **SalesVNet** and **ResearchVNet** virtual networks. Up to 60 seconds might pass before the connection attempt times out. To force the attempt to stop, use Ctrl+C.
+    
+    ![Diagram showing the attempt failing to connect from SalesVM to the private IP address of ResearchVM.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/5-sales-step-9.svg)
+    
+8. Enter `exit` to close the SSH session and return to Cloud Shell.
+    
+
+## Test connections from ResearchVM
+
+In the second test, you use SSH in Cloud Shell to connect to the public IP address of **ResearchVM**. Then, you attempt to connect from **ResearchVM** to **MarketingVM** and **SalesVM**.
+
+1. In Cloud Shell, run the following command, using SSH to connect to the public IP address of **ResearchVM**. In the command, replace `<ResearchVM public IP>` with this VM's _public_ IP address.
+    
+    BashCopy
+    
+    ```
+    ssh -o StrictHostKeyChecking=no azureuser@<ResearchVM public IP>
+    ```
+    
+    ![Diagram showing connection to the public IP address of ResearchVM.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/5-research-step-1.svg)
+    
+2. Sign in by using the password that you used to create the VM. The prompt now shows that you're signed in to **ResearchVM**.
+    
+3. In Cloud Shell, run the following command, using SSH to connect to the private IP address of **MarketingVM**. In the command, replace `<MarketingVM private IP>` with this VM's _private_ IP address.
+    
+    BashCopy
+    
+    ```
+    ssh -o StrictHostKeyChecking=no azureuser@<MarketingVM private IP>
+    ```
+    
+    ![Diagram showing connection to the private IP address of MarketingVM.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/5-research-step-5.svg)
+    
+    The connection attempt should succeed because of the peering connection between the **ResearchVNet** and **MarketingVNet** virtual networks.
+    
+4. Sign in by using the password you used to create the VM.
+    
+5. Enter `exit` to close this SSH session and return to the **ResearchVM** prompt.
+    
+6. In Cloud Shell, run the following command, using SSH to connect to the private IP address of **SalesVM**. In the command, replace `<SalesVM private IP>` with this VM's _private_ IP address.
+    
+    BashCopy
+    
+    ```
+    ssh -o StrictHostKeyChecking=no azureuser@<SalesVM private IP>
+    ```
+    
+7. The connection attempt should fail because there's no peering connection between the **ResearchVNet** and **SalesVNet** virtual networks. Up to 60 seconds might pass before the connection attempt times out. To force the attempt to stop, use Ctrl+C.
+    
+    ![Diagram showing the attempt failing to connect ResearchVM to the private IP address of SalesVM.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/5-research-step-9.svg)
+    
+8. Enter `exit` to close the SSH session and return to Cloud Shell.
+    
+
+## Test connections from Marketing VM
+
+In the final test, you use SSH in Cloud Shell to connect to the public IP address of **MarketingVM**. You then attempt to connect from **MarketingVM** to **ResearchVM** and **SalesVM**.
+
+1. In Cloud Shell, run the following command, using SSH to connect to the public IP address of **MarketingVM**. In the command, replace `<MarketingVM public IP>` with this VM's _public_ IP address.
+    
+    BashCopy
+    
+    ```
+    ssh -o StrictHostKeyChecking=no azureuser@<MarketingVM public IP>
+    ```
+    
+    ![Diagram that shows connection to the public IP address of MarketingVM.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/5-marketing-step-1.svg)
+    
+2. Sign in by using the password that you used to create the VM. The prompt shows that you're signed in to **MarketingVM**.
+    
+3. In Cloud Shell, run the following command, using SSH to connect to the private IP address of **ResearchVM**. In the command, replace `<ResearchVM private IP>` with this VM's _private_ IP address.
+    
+    BashCopy
+    
+    ```
+    ssh -o StrictHostKeyChecking=no azureuser@<ResearchVM private IP>
+    ```
+    
+    ![Diagram that shows Azure Cloud Shell connecting to the MarketingVNet and the ResearchVNet virtual networks, using a peering connection.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/5-marketing-step-5.svg)
+    
+    The connection attempt should succeed because of the peering connection between the **MarketingVNet** and **ResearchVNet** virtual networks.
+    
+4. Sign in by using the password you used to create the VM.
+    
+5. Enter `exit` to close this SSH session, and return to the **MarketingVM** prompt.
+    
+6. In Cloud Shell, run the following command, using SSH to connect to the private IP address of **SalesVM**. In the command, replace `<SalesVM private IP>` with this VM's _private_ IP address.
+    
+    BashCopy
+    
+    ```
+    ssh -o StrictHostKeyChecking=no azureuser@<SalesVM private IP>
+    ```
+    
+    This connection attempt should also succeed because of the peering connection between the **MarketingVNet** and **SalesVNet** virtual networks.
+    
+    ![Diagram that shows Azure Cloud Shell connecting to the MarketingVNet and the SalesVNet virtual machines, using a peering connection.](https://learn.microsoft.com/en-us/training/modules/integrate-vnets-with-vnet-peering/media/5-marketing-step-9.svg)
+    
+7. Sign in by using the password you used to create the VM.
+    
+8. Enter `exit` to close this SSH session, and return to the **MarketingVM** prompt.
+    
+9. Enter `exit` to close the SSH session, and return to Cloud Shell.
+    
+
+This simple test using SSH demonstrates network connectivity between peered virtual networks. It also demonstrates lack of network connectivity for transitive connections.
+
+If these servers were running application services, the server connectivity would allow communication between the services running on the VMs. The connectivity would allow the business to share data across departments as required.
+
+# Summary
+
+In this module, you learned how to use peering to connect virtual networks in a hub and spoke topology. You used VMs and SSH to verify connectivity between virtual networks. The peering connections enable communication for services that run on the VMs.
+
+Now that you understand how to peer virtual networks together, you can use this secure and cost-effective method in your Azure network infrastructure. The method enables low-latency communication between resources in virtual networks. It supports scenarios where resources are in different regions or subscriptions. Virtual network peering should be your first choice when you need to connect virtual networks.
+
+---
+# Host your domain on Azure DNS
+
+# Introduction
+
+Azure DNS lets you host your Domain Name System (DNS) records for your domains on Azure infrastructure. With Azure DNS, you can use the same credentials, APIs, tools, and billing as your other Azure services.
+
+Let's say that your company recently bought the custom domain name wideworldimporters.com from a third-party domain-name registrar. The domain name is for a new website that your organization plans to launch. You need a hosting service for DNS domains. This hosting service would resolve the wideworldimporters.com domain to your web server's IP address.
+
+You're already using Azure to build your website, so you decide to use Azure DNS to manage your domain.
+
+This module shows you how to configure Azure DNS to host your domain. You also see how to add an alias and other DNS records to resolve your domain name to a website.
+
+## Learning objectives
+
+In this module, you will:
+
+- Configure Azure DNS to host your domain.
+
+## Prerequisites
+
+- Knowledge of networking concepts like name resolution and IP addresses.
+
+# What is Azure DNS?
+
+Azure DNS is a hosting service for Domain Name System (DNS) domains that provides name resolution by using Microsoft Azure infrastructure.
+
+In this unit, you learn what DNS is and how it works. You also learn about Azure DNS and why you'd use it.
+
+## What is DNS?
+
+DNS, or the Domain Name System, is a protocol within the TCP/IP standard. DNS serves an essential role of translating the human-readable domain names—for example: `www.wideworldimports.com`—into a known IP address. IP addresses enable computers and network devices to identify and route requests among themselves.
+
+DNS uses a global directory hosted on servers around the world. Microsoft is part of the network that provides a DNS service through Azure DNS.
+
+A DNS server is also known as a DNS name server, or just a name server.
+
+## How does DNS work?
+
+A DNS server carries out one of two primary functions:
+
+- Maintains a local cache of recently accessed or used domain names and their IP addresses. This cache provides a faster response to a local domain lookup request. If the DNS server can't find the requested domain, it passes the request to another DNS server. This process repeats at each DNS server until either a match is made or the search times out.
+- Maintains the key-value pair database of IP addresses and any host or subdomain over which the DNS server has authority. This function is often associated with mail, web, and other internet domain services.
+
+### DNS server assignment
+
+In order for a computer, server, or other network-enabled device to access web-based resources, it must reference a DNS server.
+
+When you connect by using your on-premises network, the DNS settings come from your server. When you connect by using an external location like a hotel, the DNS settings come from the internet service provider (ISP).
+
+### Domain lookup requests
+
+Here's a simplified overview of the process a DNS server uses when it resolves a domain-name lookup request:
+
+- If the domain name is stored in the short-term cache, the DNS server resolves the domain request.
+- If the domain isn't in the cache, it contacts one or more DNS servers on the web to see if they have a match. When a match is found, the DNS server updates the local cache and resolves the request.
+- If the domain isn't found after a reasonable number of DNS checks, the DNS server responds with a _domain cannot be found_ error.
+
+### IPv4 and IPv6
+
+Every computer, server, or network-enabled device on your network has an IP address. An IP address is unique within your domain. There are two standards of IP address: IPv4 and IPv6.
+
+- **IPv4** is composed of four sets of numbers, in the range 0 to 255, each separated by a dot; for example: 127.0.0.1. Today, IPv4 is the most commonly used standard. Yet, with the increase in IoT devices, the IPv4 standard will eventually be unable to keep up.
+    
+- **IPv6** is a relatively new standard and is intended to eventually replace IPv4. It consists of eight groups of hexadecimal numbers, each separated by a colon; for example: fe80:11a1:ac15:e9gf:e884:edb0:ddee:fea3.
+    
+
+Many network devices are now provisioned with both an IPv4 and an IPv6 address. The DNS name server can resolve domain names to both IPv4 and IPv6 addresses.
+
+### DNS settings for your domain
+
+Whether a third-party host your DNS server or you manage it in-house, you need to configure it for each host type you're using. Host types include web, email, or other services you're using.
+
+As the administrator for your company, you want to set up a DNS server by using Azure DNS. In this instance, the DNS server acts as a start of authority (SOA) for your domain.
+
+### DNS record types
+
+Configuration information for your DNS server is stored as a file within a zone on your DNS server. Each file is called a record. The following record types are the most commonly created and used:
+
+- **A** is the host record, and is the most common type of DNS record. It maps the domain or host name to the IP address.
+- **CNAME** is a Canonical Name record that's used to create an alias from one domain name to another domain name. If you had different domain names that all accessed the same website, you'd use CNAME.
+- **MX** is the mail exchange record. It maps mail requests to your mail server, whether hosted on-premises or in the cloud.
+- **TXT** is the text record. It's used to associate text strings with a domain name. Azure and Microsoft 365 use TXT records to verify domain ownership.
+
+Additionally, there are the following record types:
+
+- Wildcards
+- CAA (certificate authority)
+- NS (name server)
+- SOA (start of authority)
+- SPF (sender policy framework)
+- SRV (server locations)
+
+The SOA and NS records are created automatically when you create a DNS zone by using Azure DNS.
+
+### Record sets
+
+Some record types support the concept of record sets, or resource record sets. A record set allows for multiple resources to be defined in a single record. For example, here's an A record that has one domain with two IP addresses:
+
+Copy
+
+```
+www.wideworldimports.com.     3600    IN    A    127.0.0.1
+www.wideworldimports.com.     3600    IN    A    127.0.0.2
+```
+
+SOA and CNAME records can't contain record sets.
+
+## What is Azure DNS?
+
+Azure DNS allows you to host and manage your domains by using a globally distributed name-server infrastructure. It allows you to manage all of your domains by using your existing Azure credentials.
+
+Azure DNS acts as the SOA for the domain.
+
+You can't use Azure DNS to register a domain name; you need to register it by using a third-party domain registrar.
+
+## Why use Azure DNS to host your domain?
+
+Azure DNS is built on the Azure Resource Manager service, which offers the following benefits:
+
+- Improved security
+- Ease of use
+- Private DNS domains
+- Alias record sets
+
+At this time, Azure DNS doesn't support Domain Name System Security Extensions. If you require this security extension, you should host those portions of your domain with a third-party provider.
+
+### Security features
+
+Azure DNS provides the following security features:
+
+- **Role-based access control**, which gives you fine-grained control over users' access to Azure resources. You can monitor their usage and control the resources and services to which they have access.
+- **Activity logs**, which let you track changes to a resource and pinpoint where faults occurred.
+- **Resource locking**, which gives you a greater level of control to restrict or remove access to resource groups, subscriptions, or any Azure resources.
+
+### Ease of use
+
+Azure DNS can manage DNS records for your Azure services and provide DNS for your external resources. Azure DNS uses the same Azure credentials, support contract, and billing as your other Azure services.
+
+You can manage your domains and records by using the Azure portal, Azure PowerShell cmdlets, or the Azure CLI. Applications that require automated DNS management can integrate with the service by using the REST API and software development kit (SDKs).
+
+### Private domains
+
+Azure DNS handles translating external domain names to IP addresses. Azure DNS lets you create private zones. These zones provide name resolution for virtual machines (VMs) within a virtual network and between virtual networks without having to create a custom DNS solution. Private zones allow you to use your own custom domain names rather than the Azure-provided names.
+
+To publish a private DNS zone to your virtual network, you specify the list of virtual networks that are allowed to resolve records within the zone.
+
+Private DNS zones have the following benefits:
+
+- DNS zones are supported as part of the Azure infrastructure, so there's no need to invest in a DNS solution.
+- All DNS record types are supported: A, CNAME, TXT, MX, SOA, AAAA, PTR, and SRV.
+- Host names for VMs in your virtual network are automatically maintained.
+- Split-horizon DNS support allows the same domain name to exist in both private and public zones. It resolves to the correct one based on the originating request location.
+
+### Alias record sets
+
+Alias records sets can point to an Azure resource. For example, you can set up an alias record to direct traffic to an Azure public IP address, an Azure Traffic Manager profile, or an Azure Content Delivery Network endpoint.
+
+The alias record set is supported in the following DNS record types:
+
+- A
+- AAAA
+- CNAME
+
+# Configure Azure DNS to host your domain
+
+The new company website is in final testing. You're working on the plan to deploy the wideworldimports.com domain by using Azure DNS. You need to understand what steps are involved.
+
+In this unit, you learn how to:
+
+- Create and configure a DNS zone for your domain by using Azure DNS.
+- Understand how to link your domain to an Azure DNS zone.
+- Create and configure a private DNS zone.
+
+## Configure a public DNS zone
+
+You use a DNS zone to host the DNS records for a domain, such as wideworldimports.com.
+
+### Step 1: Create a DNS zone in Azure
+
+You used a third-party domain-name registrar to register the wideworldimports.com domain. The domain doesn't point to your organization's website yet.
+
+To host the domain name with Azure DNS, you first need to create a DNS zone for that domain. A DNS zone holds all the DNS entries for your domain.
+
+When creating a DNS zone, you need to supply the following details:
+
+- **Subscription**: The subscription to be used.
+    
+- **Resource group**: The name of the resource group to hold your domains. If one doesn't exist, create one to allow for better control and management.
+    
+- **Name**: Your domain name, which in this case is wideworldimports.com.
+    
+- **Resource group location**: The location defaults to the location of the resource group.
+    
+    ![Screenshot of Create DNS zone page.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/3-create-dns-zone.png)
+    
+
+### Step 2: Get your Azure DNS name servers
+
+After you create a DNS zone for the domain, you need to get the name server details from the name servers (NS) record. You use these details to update your domain registrar's information and point to the Azure DNS zone.
+
+![Screenshot of the name server details on the DNS zone page.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/3-name-server.png)
+
+### Step 3: Update the domain registrar setting
+
+As the domain owner, you need to sign in to the domain-management application provided by your domain registrar. In the management application, edit the NS record and change the NS details to match your Azure DNS name server details.
+
+Changing the NS details is called _domain delegation_. When you delegate the domain, you must use all four name servers provided by Azure DNS.
+
+### Step 4: Verify delegation of domain name services
+
+The next step is to verify that the delegated domain now points to the Azure DNS zone you created for the domain. This process can take as few as 10 minutes, but might take longer.
+
+To verify the success of the domain delegation, query the start of authority (SOA) record. The SOA record is automatically created when the Azure DNS zone is set up. You can verify the SOA record using a tool like nslookup.
+
+The SOA record represents your domain and becomes the reference point when other DNS servers are searching for your domain on the internet.
+
+To verify the delegation, use nslookup like this:
+
+dosCopy
+
+```
+nslookup -type=SOA wideworldimports.com
+```
+
+### Step 5: Configure your custom DNS settings
+
+The domain name is wideworldimports.com. When it's used in a browser, the domain resolves to your website. But what if you want to add in web servers or load balancers? These resources need to have their own custom settings in the DNS zone, either as an A record or a CNAME.
+
+#### A record
+
+Each A record requires the following details:
+
+- **Name**: The name of the custom domain, for example _webserver1_.
+- **Type**: In this instance, it's A.
+- **TTL**: Represents the "time-to-live" as a whole unit, where 1 is one second. This value indicates how long the A record lives in a DNS cache before it expires.
+- **IP address**: The IP address of the server to which this A record should resolve.
+
+#### CNAME record
+
+The CNAME is the canonical name, or the alias for an A record. Use CNAME when you have different domain names that all access the same website. For example, you might need a CNAME in the _wideworldimports_ zone if you want both www.wideworldimports.com and wideworldimports.com to resolve to the same IP address.
+
+You'd create the CNAME record in the _wideworldimports_ zone with the following information:
+
+- NAME: www
+- TTL: 600 seconds
+- Record type: CNAME
+
+If you exposed a web function, you'd create a CNAME record that resolves to the Azure function.
+
+## Configure a private DNS zone
+
+Another type of DNS zone that you can configure and host in Azure is a private DNS zone. Private DNS zones aren't visible on the Internet, and don't require that you use a domain registrar. You can use private DNS zones to assign DNS names to virtual machines (VMs) in your Azure virtual networks.
+
+### Step 1: Create a private DNS zone
+
+In the Azure portal, search for _private DNS zones_. To create the private zone, you need enter a resource group and the name of the zone. For example, the name might be something like private.wideworldimports.com.
+
+![Screenshot of the Create Private DNS zone page.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/3-create-private-dns-zone.png)
+
+### Step 2: Identify virtual networks
+
+Let's assume that your organization already created your VMs and virtual networks in a production environment. Identify the virtual networks associated with VMs that need name-resolution support. To link the virtual networks to the private zone, you need the virtual network names.
+
+### Step 3: Link your virtual network to a private DNS zone
+
+To link the private DNS zone to a virtual network, you create a virtual network link. In the Azure portal, go to the private zone, and select **Virtual network links**.
+
+![Screenshot of the Virtual Network Links page in a private DNS zone.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/3-virtual-network-link-option.png)
+
+Select **Add** to pick the virtual network you want to link to the private zone.
+
+![Screenshot of Add virtual network link page.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/3-add-virtual-network-link.png)
+
+You add a virtual network link record for each virtual network that needs private name-resolution support.
+
+In the next unit, you learn how to create a public DNS zone.
+
+
+# Exercise - Create a DNS zone and an A record by using Azure DNS
+
+In the previous unit, we described setting up and configuring the wideworldimports.com domain to point to your Azure hosting on Azure DNS.
+
+In this unit, you'll:
+
+- Set up an Azure DNS and create a public DNS zone.
+- Create an A record.
+- Verify that the A record resolves to an IP address.
+
+## Create a DNS zone in Azure DNS
+
+Before you can host the wideworldimports.com domain on your servers, you need to create a DNS zone. The DNS zone holds all the configuration records associated with your domain.
+
+To create your DNS zone:
+
+1. Sign in to the [Azure portal](https://portal.azure.com/learn.docs.microsoft.com) with the account you used to activate the sandbox.
+    
+2. On the Azure **home** page, under **Azure services**, select **Create a resource**. The **Create a resource** pane appears.
+    
+3. In the _Search services and marketplace_ search box, search for and select **DNS zone** by Microsoft. The **DNS zone** pane appears.
+    
+4. Select **Create** > **DNS zone**.
+    
+    ![Screenshot of DNS zone, with Create highlighted.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/4-dnszonecreate.png)
+    
+    The **Create DNS zone** pane appears.
+    
+5. On the **Basics** tab, enter the following values for each setting.
+    
+
+    
+|Setting|Value|
+|---|---|
+|**Project details**||
+|Subscription|Concierge subscription|
+|Resource group|From the dropdown list, select [sandbox resource group]|
+|**Instance details**||
+|Name|The name needs to be unique in the sandbox. Use `wideworldimportsXXXX.com`, and replace the "Xs" with letters or numbers.|
+    
+    ![Screenshot of Create DNS zone page.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/4-creatednszone.png)
+    
+6. Select **Review + create**.
+    
+7. After validation passes, select **Create**. It takes a few minutes to create the DNS zone.
+    
+8. When deployment is complete, select **Go to resource**. The **Overview** pane for your **DNS zone** appears.
+    
+9. Select **Record Sets** from the top menu bar.
+    
+    By default, the NS, and SOA record sets are automatically created and automatically deleted whenever a DNS zone is created or deleted. The NS record set defines the Azure DNS namespaces and contains the four Azure DNS records. You use all four records when you update the registrar.
+    
+    The SOA record represents your domain, and is used when other DNS servers are searching for your domain.
+    
+10. Make a note of the NS record values. You need them in the next section.
+    
+
+## Create a DNS record
+
+Now that the DNS zone exists, you need to create the necessary records to support the domain.
+
+The primary record set to create is the A record. The A record set is used to point traffic from a logical domain name to the hosting server's IP address. An A record set can have multiple records. In a record set, the domain name remains constant, while the IP addresses differ.
+
+1. If you're not already on the **Record Sets** screen, then open the **DNS zone** pane for _wideworldimportsXXXX.com_. In the top menu bar, select **Record sets**.
+    
+2. On the **Record Sets** pane, select **+ Add** in the top menu bar.
+    
+3. Select **Add** at the top of the Record sets page.
+    
+    [![Screenshot of adding a record set.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/4-add-a-record.png)](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/4-arecord.png#lightbox)
+    
+    The **Add record set** pane appears.
+    
+4. Enter the following values for each setting.
+    
+  
+|Setting|Value|Description|
+|---|---|---|
+|Name|www|The host name that you want to resolve to an IP address.|
+|Type|A|The **A** record is the most commonly used. If you're using IPv6, select the **AAAA** type.|
+|Alias record set|No|This setting can only be applied to A, AAAA, and CNAME record types.|
+|TTL|1|The time to live, which specifies the period of time each DNS server caches the resolution before being purged.|
+|TTL unit|Hours|This value can be seconds, minutes, hours, days, or weeks. Here, you're selecting hours.|
+|IP Address|10.10.10.10|The IP address the record name resolves to. In a real-world scenario, you'd enter the public IP address for your web server.|
+    
+5. Select **Add** to add the record to your zone.
+    
+    [![Screenshot of A record set.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/4-arecord.png)](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/4-arecord.png#lightbox)
+    
+
+It's possible to have more than one IP address set up for your web server. In that case, you add all the associated IP addresses as records in the A record set. After the record set is created, you can update it with more IP addresses.
+
+## Verify your global Azure DNS
+
+In a real-world scenario, after you create the public DNS zone, you update the NS records of the domain-name registrar to delegate the domain to Azure.
+
+Even though we don't have a registered domain, it's still possible to verify that the DNS zone works as expected by using the `nslookup` tool.
+
+### Use nslookup to verify the configuration
+
+Here's how to use `nslookup` to verify the DNS zone configuration.
+
+1. Use Cloud Shell to run the following command. Replace the DNS zone name with the zone you created, and replace `<name server address>` with one of the NS values you copied after you created the DNS zone.
+    
+    BashCopy
+    
+    ```
+    nslookup www.wideworldimportsXXXX.com <name server address>
+    ```
+    
+    The command should look something like the following example:
+    
+    BashCopy
+    
+    ```
+    nslookup www.wideworldimportsXXXX.com ns1-04.azure-dns.com
+    ```
+    
+2. You should see that your host name `www.wideworldimportsXXXX.com` resolves to 10.10.10.10.
+    
+    ![Screenshot of Cloud Shell, showing the nslookup results.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/4-nslookup.png)
+    
+
+Congratulations! You successfully set up a DNS zone and created an A record.
+
+# Dynamically resolve resource name by using alias record
+
+In the previous exercise, you successfully delegated the domain from the domain registrar to your Azure DNS and configured an A record to link the domain to your web server.
+
+The next phase of the deployment is to improve resiliency by using a load balancer. Load balancers distribute inbound data requests and traffic across one or more servers. They reduce the load on any one server and improve performance. This technology is well established. You can use it throughout your on-premises network.
+
+You know that the A record and CNAME record don't support direct connection to Azure resources like your load balancers. You're tasked with finding out how to link the apex domain with a load balancer.
+
+## What is an apex domain?
+
+The apex domain is your domain's highest level. In our case, that's wideworldimports.com. The apex domain is also sometimes referred to as the _zone apex_ or _root apex_. The **@** symbol often represents the apex domain in your DNS zone records.
+
+If you check the DNS zone for wideworldimports.com, you see that there are two apex domain records: NS and SOA. The NS and SOA records are automatically created when you created the DNS zone.
+
+CNAME records that you might need for an Azure Traffic Manager profile or Azure Content Delivery Network endpoints aren't supported at the zone apex level. However, other _alias records_ are supported at the zone apex level.
+
+## What are alias records?
+
+Azure alias records enable a zone apex domain to reference other Azure resources from the DNS zone. You don't need to create complex redirection policies. You can also use an Azure alias to route all traffic through Traffic Manager.
+
+The Azure alias record can point to the following Azure resources:
+
+- A Traffic Manager profile
+- Azure Content Delivery Network endpoints
+- A public IP resource
+- A front-door profile
+
+Alias records provide lifecycle tracking of target resources, ensuring that changes to any target resource are automatically applied to the DNS zone. Alias records also provide support for load-balanced applications in the zone apex.
+
+The alias record set supports the following DNS zone record types:
+
+- **A**: The IPv4 domain name-mapping record.
+- **AAAA**: The IPv6 domain name-mapping record.
+- **CNAME**: The alias for your domain, which links to the A record.
+
+## Uses for alias records
+
+The following are some of the advantages of using alias records:
+
+- **Prevents dangling DNS records**: A dangling DNS record occurs when the DNS zone records aren't up to date with changes to IP addresses. Alias records prevent dangling references by tightly coupling the lifecycle of a DNS record with an Azure resource.
+- **Updates DNS record set automatically when IP addresses change**: When the underlying IP address of a resource, service, or application is changed, the alias record ensures that any associated DNS records are automatically refreshed.
+- **Hosts load-balanced applications at the zone apex**: Alias records allow for zone apex resource routing to Traffic Manager.
+- **Points zone apex to Azure Content Delivery Network endpoints**: With alias records, you can now directly reference your Azure Content Delivery Network instance.
+
+An alias record allows you to link the zone apex (wideworldimports.com) to a load balancer. It creates a link to the Azure resource rather than a direct IP-based connection. So, if the IP address of your load balancer changes, the zone apex record continues to work.
+
+# Exercise - Create alias records for Azure DNS
+
+Your new website's deployment was a huge success. Usage volumes are higher than anticipated. The single web server on which the website runs is showing signs of strain. Your organization wants to increase the number of servers and distribute the load using a load balancer.
+
+You now know you can use an Azure alias record to provide a dynamic, automatically refreshing link between the zone apex and the load balancer.
+
+In this unit, you'll:
+
+- Set up a virtual network with two VMs and a load balancer.
+- Learn how to configure an Azure alias at the zone apex to direct to the load balancer.
+- Verify that the domain name resolves to one or either of the VMs on your virtual network.
+
+## Set up a virtual network, load balancer, and VMs in Azure
+
+When you manually create a virtual network, load balancer, and two VMs, it takes some time. To reduce this time, you can use a Bash setup script that's available on GitHub. Follow these instructions to create a test environment for your alias record.
+
+1. In Azure Cloud Shell, run the following setup script:
+    
+    BashCopy
+    
+    ```
+    git clone https://github.com/MicrosoftDocs/mslearn-host-domain-azure-dns.git
+    ```
+    
+2. To run the setup script, run the following commands:
+    
+    BashCopy
+    
+    ```
+    cd mslearn-host-domain-azure-dns
+    chmod +x setup.sh
+    ./setup.sh
+    ```
+    
+    The setup script takes a few minutes to run. The script:
+    
+    - Creates a network security group.
+    - Creates two network interface controllers (NICs) and two VMs.
+    - Creates a virtual network and assigns the VMs.
+    - Creates a public IP address and updates the configuration of the VMs.
+    - Creates a load balancer that references the VMs, including rules for the load balancer.
+    - Links the NICs to the load balancer.
+    
+    After the script completes, it shows you the public IP address for the load balancer. Copy the IP address to use it later.
+    
+
+## Create an alias record in your zone apex
+
+Now that you created a test environment, you're ready to set up the Azure alias record in your zone apex.
+
+1. In the [Azure portal](https://portal.azure.com/learn.docs.microsoft.com), select **Resource groups**. The **Resource groups** pane appears.
+    
+2. Select the resource group: [sandbox resource group]. The **Resource group** pane appears.
+    
+3. In the list of resources, select the DNS zone you created in the previous exercise, wideworldimportsXXXX.com. The **wideworldimportsXXXX.com DNS zone** pane appears.
+    
+4. In the menu bar, select **+ Record set**. The **Add record set** pane appears.
+    
+5. Enter the following values for each setting to create an alias record.
+   
+|Setting|Value|
+|---|---|
+|Name|Leave the name blank. Blank indicates the DNS zone for wideworldimportsXXXX.com.|
+|Type|A. Even though we're creating an alias, the base record type must still be either A, AAAA, or CNAME.|
+|Alias record set|Yes|
+|Alias type|Azure resource|
+|Azure resource|From the list of resources, select **myPublicIP**. It can take up to 15 minutes for the deployments to propagate. If this resource isn't listed, wait several minutes, refresh the portal, and try again.|
+
+    ![Screenshot of Add record set.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/6-aliasrecord-azurelb.png)
+    
+6. Select **OK** to add the record to your zone.
+    
+
+When the new alias record is created, it should look something like this:
+
+![Screenshot of the DNS zone, with an alias record created.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/6-aliasrecord04.png)
+
+## Verify that the alias resolves to the load balancer
+
+Now, you need to verify that the alias record is set up correctly. In a real-world scenario, you'd have an actual domain, and would complete the domain delegation to Azure DNS. You'd use the registered domain name for this exercise. Because this unit assumes there's no registered domain, you use the public IP address.
+
+1. In the Azure portal, go to the resource group, select **myPublicIP**, then select the **Copy** icon next to the IP address.
+    
+    ![Screenshot of the DNS zone with an alias record created.](https://learn.microsoft.com/en-us/training/modules/host-domain-azure-dns/media/6-publicipaddress.png)
+    
+2. In a web browser, paste the Public IP address as the URL.
+    
+3. You see a basic web page that shows the name of the virtual machine (VM) to which the load balancer sent the request.
+
+---
+
+# Manage and control traffic flow in your Azure deployment with routes
+
+# Introduction
+
+A virtual network lets you implement a security perimeter around your resources in the cloud. You can control the information that flows in and out of a virtual network. You can also restrict access to allow only the traffic that originates from trusted sources.
+
+Suppose that you're the solution architect for a retail organization. Also suppose that your organization recently suffered a security incident that exposed customer information such as names, addresses, and credit card numbers. Malicious actors infiltrated vulnerabilities in your retailer's network infrastructure, which resulted in the loss of customers' confidential information.
+
+As part of a remediation plan, the security team recommends adding network protections in the form of network virtual appliances. The cloud infrastructure team must ensure traffic gets properly routed through the virtual appliances and gets inspected for malicious activity.
+
+In this module, you'll learn about Azure routing, and you'll create custom routes to control the traffic flow. You'll also learn to redirect the traffic through the network virtual appliance so you can inspect the traffic before it's allowed through.
+
+## Learning objectives
+
+In this module, you'll:
+
+- Identify the routing capabilities of an Azure virtual network.
+- Configure routing within a virtual network.
+- Deploy a basic network virtual appliance.
+- Configure routing to send traffic through a network virtual appliance.
+
+## Prerequisites
+
+- Knowledge of basic networking concepts, including subnets and IP addressing
+- Familiarity with Azure virtual networking
+
+# Identify routing capabilities of an Azure virtual network
+
+To control traffic flow within your virtual network, you must learn the purpose and benefits of custom routes. You must also learn how to configure the routes to direct traffic flow through a network virtual appliance (NVA).
+
+## Azure routing
+
+Network traffic in Azure is automatically routed across Azure subnets, virtual networks, and on-premises networks. System routes control this routing. They're assigned by default to each subnet in a virtual network. With these system routes, any Azure virtual machine that is deployed into a virtual network can communicate with any other in the network. These virtual machines are also potentially accessible from on-premises through a hybrid network or the internet.
+
+You can't create or delete system routes, but you can override the system routes by adding custom routes to control traffic flow to the next hop.
+
+Every subnet has the following default system routes:
+
+| Address prefix                | Next hop type   |
+| ----------------------------- | --------------- |
+| Unique to the virtual network | Virtual network |
+| 0.0.0.0/0                     | Internet        |
+| 10.0.0.0/8                    | None            |
+| 172.16.0.0/12                 | None            |
+| 192.168.0.0/16                | None            |
+| 100.64.0.0/10                 | None            |
+
+The **Next hop type** column shows the network path taken by traffic sent to each address prefix. The path can be one of the following hop types:
+
+- **Virtual network**: A route is created in the address prefix. The prefix represents each address range created at the virtual-network level. If multiple address ranges are specified, multiple routes are created for each address range.
+- **Internet**: The default system route 0.0.0.0/0 routes any address range to the internet, unless you override Azure's default route with a custom route.
+- **None**: Any traffic routed to this hop type is dropped and doesn't get routed outside the subnet. By default, the following IPv4 private-address prefixes are created: 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16. The prefix 100.64.0.0/10 for a shared address space is also added. None of these address ranges are globally routable.
+
+The following diagram shows an overview of system routes and shows how traffic flows among subnets and the internet by default. You can see from the diagram that traffic flows freely among the two subnets and the internet.
+
+![Diagram of traffic flowing among subnets and the internet.](https://learn.microsoft.com/en-us/training/modules/control-network-traffic-flow-with-routes/media/2-system-routes-subnets-internet.svg)
+
+Within Azure, there are other system routes. Azure creates these routes if the following capabilities are enabled:
+
+- Virtual network peering
+- Service chaining
+- Virtual network gateway
+- Virtual network service endpoint
+
+### Virtual network peering and service chaining
+
+Virtual network peering and service chaining let virtual networks within Azure connect to one another. With this connection, virtual machines can communicate with each other within the same region or across regions. This communication in turn creates more routes within the default route table. Service chaining lets you override these routes by creating user-defined routes between peered networks.
+
+The following diagram shows two virtual networks with peering configured. The user-defined routes are configured to route traffic through an NVA or an Azure VPN gateway.
+
+![Diagram of virtual network peering with user-defined routes.](https://learn.microsoft.com/en-us/training/modules/control-network-traffic-flow-with-routes/media/2-virtual-network-peering-udrs.svg)
+
+### Virtual network gateway
+
+Use a virtual network gateway to send encrypted traffic between Azure and on-premises over the internet and to send encrypted traffic between Azure networks. A virtual network gateway contains routing tables and gateway services.
+
+![Diagram of the structure of a virtual network gateway.](https://learn.microsoft.com/en-us/training/modules/control-network-traffic-flow-with-routes/media/2-virtual-network-gateway.svg)
+
+### Virtual network service endpoint
+
+Virtual network endpoints extend your private address space in Azure by providing a direct connection to your Azure resources. This connection restricts the flow of traffic: your Azure virtual machines can access your storage account directly from the private address space and deny access from a public virtual machine. As you enable service endpoints, Azure creates routes in the route table to direct this traffic.
+
+## Custom routes
+
+System routes might make it easy for you to quickly get your environment up and running. However, there are many scenarios in which you want to more closely control the traffic flow within your network. For example, you might want to route traffic through an NVA or through a firewall. This control is possible with custom routes.
+
+You have two options for implementing custom routes: create a user-defined route, or use Border Gateway Protocol (BGP) to exchange routes between Azure and on-premises networks.
+
+### User-defined routes
+
+You can use a user-defined route to override the default system routes so traffic can be routed through firewalls or NVAs.
+
+For example, you might have a network with two subnets and want to add a virtual machine in the perimeter network to be used as a firewall. You can create a user-defined route so that traffic passes through the firewall and doesn't go directly between the subnets.
+
+When creating user-defined routes, you can specify these next hop types:
+
+- **Virtual appliance**: A virtual appliance is typically a firewall device used to analyze or filter traffic that is entering or leaving your network. You can specify the private IP address of a Network Interface Card (NIC) attached to a virtual machine so that IP forwarding can be enabled. Or you can provide the private IP address of an internal load balancer.
+- **Virtual network gateway**: Use to indicate when you want routes for a specific address to be routed to a virtual network gateway. The virtual network gateway is specified as a VPN for the next hop type.
+- **Virtual network**: Use to override the default system route within a virtual network.
+- **Internet**: Use to route traffic to a specified address prefix that is routed to the internet.
+- **None**: Use to drop traffic sent to a specified address prefix.
+
+With user-defined routes, you can't specify the next hop type **VirtualNetworkServiceEndpoint**, which indicates virtual network peering.
+
+### Service tags for user-defined routes
+
+You can specify a service tag as the address prefix for a user-defined route instead of an explicit IP range. A service tag represents a group of IP address prefixes from a given Azure service. Microsoft manages the address prefixes encompassed by the service tag and automatically updates the service tag as addresses change, thus minimizing the complexity of frequent updates to user-defined routes and reducing the number of routes you need to create.
+
+### Border gateway protocol
+
+A network gateway in your on-premises network can exchange routes with a virtual network gateway in Azure by using BGP. BGP is the standard routing protocol that's normally used to exchange routing information among two or more networks. BGP is used to transfer data and information between autonomous systems on the internet, such as different host gateways.
+
+Typically, you use BGP to advertise on-premises routes to Azure when you're connected to an Azure datacenter through Azure ExpressRoute. You can also configure BGP if you connect to an Azure virtual network by using a VPN site-to-site connection.
+
+The following diagram shows a topology with paths that can pass data between Azure VPN Gateway and on-premises networks:
+
+![Diagram showing an example of using the Border Gateway Protocol.](https://learn.microsoft.com/en-us/training/modules/control-network-traffic-flow-with-routes/media/2-bgp.svg)
+
+BGP offers network stability, because routers can quickly change connections to send packets if a connection path goes down.
+
+## Route selection and priority
+
+If multiple routes are available in a route table, Azure uses the route with the longest prefix match. For example, a message is sent to the IP address 10.0.0.2, but two routes are available with the 10.0.0.0/16 and 10.0.0.0/24 prefixes. Azure selects the route with the 10.0.0.0/24 prefix because it's more specific.
+
+The longer the route prefix, the shorter the list of IP addresses available through that prefix. When you use longer prefixes, the routing algorithm can select the intended address more quickly.
+
+You can't configure multiple user-defined routes with the same address prefix.
+
+If there are multiple routes with the same address prefix, Azure selects the route based on the type in the following order of priority:
+
+1. User-defined routes
+2. BGP routes
+3. System routes
+
+# Exercise - Create custom routes
+
+As you implement your security strategy, you want to control how network traffic is routed across your Azure infrastructure.
+
+In the following exercise, you use a network virtual appliance (NVA) to help secure and monitor traffic. You want to ensure communication between front-end public servers and internal private servers is always routed through the appliance.
+
+You configure the network so that all traffic flowing from a public subnet to a private subnet will be routed through the NVA. To make this flow happen, you create a custom route for the public subnet to route this traffic to a perimeter-network subnet. Later, you deploy an NVA to the perimeter-network subnet.
+
+![Diagram of virtual network, subnets, and route table.](https://learn.microsoft.com/en-us/training/modules/control-network-traffic-flow-with-routes/media/3-virtual-network-subnets-route-table.svg)
+
+In this exercise, you create the route table, custom route, and subnets. You'll then associate the route table with a subnet.
+
+## Create a route table and custom route
+
+The first task is to create a new routing table and then add a custom route for all traffic intended for the private subnet.
+
+ Note
+
+You might get an error that reads: _This command is implicitly deprecated_. Please ignore this error for this learning module. We're working on it!
+
+1. In the Cloud Shell window on the right side of the screen, select the **More** icon (**...**), then select **Settings** > **Go to Classic version**.
+    
+2. In Azure Cloud Shell, run the following command to create a route table:
+    
+    Azure CLICopy
+    
+    ```
+        az network route-table create \
+            --name publictable \
+            --resource-group "[sandbox resource group name]" \
+            --disable-bgp-route-propagation false
+    ```
+    
+3. Run the following command in Cloud Shell to create a custom route:
+    
+    Azure CLICopy
+    
+    ```
+        az network route-table route create \
+            --route-table-name publictable \
+            --resource-group "[sandbox resource group name]" \
+            --name productionsubnet \
+            --address-prefix 10.0.1.0/24 \
+            --next-hop-type VirtualAppliance \
+            --next-hop-ip-address 10.0.2.4
+    ```
+    
+
+## Create a virtual network and subnets
+
+The next task is to create the **vnet** virtual network and the three subnets you need: **publicsubnet**, **privatesubnet**, and **dmzsubnet**.
+
+1. Run the following command to create the **vnet** virtual network and the **publicsubnet** subnet:
+    
+    Azure CLICopy
+    
+    ```
+        az network vnet create \
+            --name vnet \
+            --resource-group "[sandbox resource group name]" \
+            --address-prefixes 10.0.0.0/16 \
+            --subnet-name publicsubnet \
+            --subnet-prefixes 10.0.0.0/24
+    ```
+    
+2. Run the following command in Cloud Shell to create the **privatesubnet** subnet:
+    
+    Azure CLICopy
+    
+    ```
+        az network vnet subnet create \
+            --name privatesubnet \
+            --vnet-name vnet \
+            --resource-group "[sandbox resource group name]" \
+            --address-prefixes 10.0.1.0/24
+    ```
+    
+3. Run the following command to create the **dmzsubnet** subnet:
+    
+    Azure CLICopy
+    
+    ```
+        az network vnet subnet create \
+            --name dmzsubnet \
+            --vnet-name vnet \
+            --resource-group "[sandbox resource group name]" \
+            --address-prefixes 10.0.2.0/24
+    ```
+    
+4. You should now have three subnets. Run the following command to show all of the subnets in the **vnet** virtual network:
+    
+    Azure CLICopy
+    
+    ```
+        az network vnet subnet list \
+            --resource-group "[sandbox resource group name]" \
+            --vnet-name vnet \
+            --output table
+    ```
+    
+
+## Associate the route table with the public subnet
+
+The final task in this exercise is to associate the route table with the **publicsubnet** subnet.
+
+Run the following command to associate the route table with the public subnet.
+
+Azure CLICopy
+
+```
+    az network vnet subnet update \
+        --name publicsubnet \
+        --vnet-name vnet \
+        --resource-group "[sandbox resource group name]" \
+        --route-table publictable
+```
+
+
+# What is an NVA?
+
+A network virtual appliance (NVA) is a virtual appliance that consists of various layers like:
+
+- A firewall
+- A WAN optimizer
+- Application-delivery controllers
+- Routers
+- Load balancers
+- IDS/IPS
+- Proxies
+
+You can deploy NVAs that you choose from providers in Azure Marketplace. Such providers include Cisco, Check Point, Barracuda, Sophos, WatchGuard, and SonicWall. You can use an NVA to filter traffic inbound to a virtual network, to block malicious requests, and to block requests made from unexpected resources.
+
+In the retail-organization example scenario, you must work with the security and network teams. You want to implement a secure environment that scrutinizes all incoming traffic and blocks unauthorized traffic from passing on to the internal network. You also want to secure both virtual-machine networking and Azure-services networking as part of your company's network-security strategy.
+
+Your goal is to prevent unwanted or unsecured network traffic from reaching key systems.
+
+As part of the network-security strategy, you must control the flow of traffic within your virtual network. You also must learn the role of an NVA and the benefit of using an NVA to control traffic flow through an Azure network.
+
+## Network virtual appliance
+
+**Network virtual appliances (NVAs) are virtual machines that control the flow of network traffic by controlling routing**. You'll typically use them to manage traffic flowing from a perimeter-network environment to other networks or subnets.
+
+![Diagram of a network architecture with a network virtual appliance.](https://learn.microsoft.com/en-us/training/modules/control-network-traffic-flow-with-routes/media/4-nva.svg)
+
+You can deploy firewall appliances into a virtual network in different configurations. **You can put a firewall appliance in a perimeter-network subnet in the virtual network**, or if you want more control of security, implement a microsegmentation approach.
+
+With the microsegmentation approach, you can create dedicated subnets for the firewall and then deploy web applications and other services in other subnets. All traffic is routed through the firewall and inspected by the NVAs. You'll enable forwarding on the virtual-appliance network interfaces to pass traffic that is accepted by the appropriate subnet.
+
+Microsegmentation lets the firewall inspect all packets at OSI Layer 4 and, for application-aware appliances, Layer 7. When you deploy an NVA to Azure, it acts as a router that forwards requests between subnets on the virtual network.
+
+Some NVAs require multiple network interfaces. One network interface is dedicated to the management network for the appliance. Additional network interfaces manage and control the traffic processing. After you’ve deployed the NVA, you can then configure the appliance to route the traffic through the proper interface.
+
+### User-defined routes
+
+For most environments, the default system routes already defined by Azure are enough to get the environments up and running. In certain cases, you should create a routing table and add custom routes. Examples include:
+
+- Access to the internet via on-premises network using forced tunneling
+- Using virtual appliances to control traffic flow
+
+You can create multiple route tables in Azure. Each route table can be associated with one or more subnets. A subnet can only be associated with one route table.
+
+## Network virtual appliances in a highly available architecture
+
+If traffic is routed through an NVA, the NVA becomes a critical piece of your infrastructure. Any NVA failures directly affect the ability of your services to communicate. It's important to include a highly available architecture in your NVA deployment.
+
+There are several methods of achieving high availability when using NVAs. At the end of this module, you can find more information about using NVAs in highly available scenarios.
+
+# Exercise - Create an NVA and virtual machines
+
+
+
+In the next stage of your security implementation, you'll deploy a network virtual appliance (NVA) to secure and monitor traffic between your front-end public servers and internal private servers.
+
+First, configure the appliance to forward IP traffic. If IP forwarding isn't enabled, traffic that is routed through your appliance will never be received by its intended destination servers.
+
+In this exercise, you deploy the **nva** network appliance to the **dmzsubnet** subnet. Then you enable IP forwarding so that traffic from **`*`** and traffic that uses the custom route is sent to the **privatesubnet** subnet.
+
+![Diagram of a Network virtual appliance with IP forwarding enabled.](https://learn.microsoft.com/en-us/training/modules/control-network-traffic-flow-with-routes/media/5-nva-ip-forwarding.svg)
+
+In the following steps, you'll deploy an NVA. You'll then update the Azure virtual NIC and the network settings within the appliance to enable IP forwarding.
+
+## Deploy the network virtual appliance
+
+To build the NVA, deploy an Ubuntu LTS instance.
+
+1. In Cloud Shell, run the following command to deploy the appliance. Replace `<password>` with a suitable password of your choice for the **azureuser** admin account.
+    
+    Azure CLICopy
+    
+    ```
+    az vm create \
+        --resource-group "[sandbox resource group name]" \
+        --name nva \
+        --vnet-name vnet \
+        --subnet dmzsubnet \
+        --image Ubuntu2204 \
+        --admin-username azureuser \
+        --admin-password <password>
+    ```
+    
+
+## Enable IP forwarding for the Azure network interface
+
+In the next steps, you enable IP forwarding for the **nva** network appliance. When traffic flows to the NVA but is meant for another target, the NVA will route that traffic to its correct destination.
+
+1. Run the following command to get the NVA network interface's ID:
+    
+    Azure CLICopy
+    
+    ```
+    NICID=$(az vm nic list \
+        --resource-group "[sandbox resource group name]" \
+        --vm-name nva \
+        --query "[].{id:id}" --output tsv)
+    
+    echo $NICID
+    ```
+    
+2. Run the following command to get the NVA network interface's name:
+    
+    Azure CLICopy
+    
+    ```
+    NICNAME=$(az vm nic show \
+        --resource-group "[sandbox resource group name]" \
+        --vm-name nva \
+        --nic $NICID \
+        --query "{name:name}" --output tsv)
+    
+    echo $NICNAME
+    ```
+    
+3. Run the following command to enable IP forwarding for the network interface:
+    
+    Azure CLICopy
+    
+    ```
+    az network nic update --name $NICNAME \
+        --resource-group "[sandbox resource group name]" \
+        --ip-forwarding true
+    ```
+    
+
+## Enable IP forwarding in the appliance
+
+1. Run the following command to save the NVA virtual machine's public IP address to the variable `NVAIP`:
+    
+    Azure CLICopy
+    
+    ```
+    NVAIP="$(az vm list-ip-addresses \
+        --resource-group "[sandbox resource group name]" \
+        --name nva \
+        --query "[].virtualMachine.network.publicIpAddresses[*].ipAddress" \
+        --output tsv)"
+    
+    echo $NVAIP
+    ```
+    
+2. Run the following command to enable IP forwarding within the NVA:
+    
+    BashCopy
+    
+    ```
+    ssh -t -o StrictHostKeyChecking=no azureuser@$NVAIP 'sudo sysctl -w net.ipv4.ip_forward=1; exit;'
+    ```
+    
+    When prompted, enter the password you used when you created the virtual machine.
+
+# Exercise - Route traffic through the NVA
+
+
+Now that you've created the network virtual appliance (NVA) and virtual machines (VMs), you'll route the traffic through the NVA.
+
+![Visualization of virtual machines and IP addresses.](https://learn.microsoft.com/en-us/training/modules/control-network-traffic-flow-with-routes/media/6-vms-ip-addresses.svg)
+
+## Create public and private virtual machines
+
+The next steps deploy a VM into the public and private subnets.
+
+1. Open the Cloud Shell editor and create a file named cloud-init.txt.
+    
+    BashCopy
+    
+    ```
+    code cloud-init.txt
+    ```
+    
+2. Add the following configuration information to the file. With this configuration, the `inetutils-traceroute` package is installed when you create a new VM. This package contains the `traceroute` utility that you'll use later in this exercise.
+    
+    TextCopy
+    
+    ```
+    #cloud-config
+    package_upgrade: true
+    packages:
+       - inetutils-traceroute
+    ```
+    
+3. Press Ctrl+S to save the file, and then press Ctrl+Q to close the editor.
+    
+4. In Cloud Shell, run the following command to create the **public** VM. Replace `<password>` with a suitable password for the **azureuser** account.
+    
+    Azure CLICopy
+    
+    ```
+    az vm create \
+        --resource-group "[sandbox resource group name]" \
+        --name public \
+        --vnet-name vnet \
+        --subnet publicsubnet \
+        --image Ubuntu2204 \
+        --admin-username azureuser \
+        --no-wait \
+        --custom-data cloud-init.txt \
+        --admin-password <password>
+    ```
+    
+5. Run the following command to create the **private** VM. Replace `<password>` with a suitable password.
+    
+    Azure CLICopy
+    
+    ```
+    az vm create \
+        --resource-group "[sandbox resource group name]" \
+        --name private \
+        --vnet-name vnet \
+        --subnet privatesubnet \
+        --image Ubuntu2204 \
+        --admin-username azureuser \
+        --no-wait \
+        --custom-data cloud-init.txt \
+        --admin-password <password>
+    ```
+    
+6. Run the following Linux `watch` command to check that the VMs are running. The `watch` command periodically runs the `az vm list` command so that you can monitor the progress of the VMs.
+    
+    BashCopy
+    
+    ```
+    watch -d -n 5 "az vm list \
+        --resource-group "[sandbox resource group name]" \
+        --show-details \
+        --query '[*].{Name:name, ProvisioningState:provisioningState, PowerState:powerState}' \
+        --output table"
+    ```
+    
+    A **ProvisioningState** value of "Succeeded" and a **PowerState** value of "VM running" indicate a successful deployment. When all three VMs are running, you're ready to move on. Press Ctrl-C to stop the command and continue with the exercise.
+    
+7. Run the following command to save the public IP address of the **public** VM to a variable named `PUBLICIP`:
+    
+    Azure CLICopy
+    
+    ```
+    PUBLICIP="$(az vm list-ip-addresses \
+        --resource-group "[sandbox resource group name]" \
+        --name public \
+        --query "[].virtualMachine.network.publicIpAddresses[*].ipAddress" \
+        --output tsv)"
+    
+    echo $PUBLICIP
+    ```
+    
+8. Run the following command to save the public IP address of the **private** VM to a variable named `PRIVATEIP`:
+    
+    Azure CLICopy
+    
+    ```
+    PRIVATEIP="$(az vm list-ip-addresses \
+        --resource-group "[sandbox resource group name]" \
+        --name private \
+        --query "[].virtualMachine.network.publicIpAddresses[*].ipAddress" \
+        --output tsv)"
+    
+    echo $PRIVATEIP
+    ```
+    
+
+## Test traffic routing through the network virtual appliance
+
+The final steps use the Linux `traceroute` utility to show how traffic is routed. You'll use the `ssh` command to run `traceroute` on each VM. The first test shows the route taken by ICMP packets sent from the **public** VM to the **private** VM. The second test shows the route taken by ICMP packets sent from the **private** VM to the **public** VM.
+
+1. Run the following command to trace the route from **public** to **private**. When prompted, enter the password for the **azureuser** account that you specified earlier.
+    
+    BashCopy
+    
+    ```
+    ssh -t -o StrictHostKeyChecking=no azureuser@$PUBLICIP 'traceroute private --type=icmp; exit'
+    ```
+    
+    If you receive the error message `bash: traceroute: command not found`, wait a minute and retry the command. The automated installation of `traceroute` can take a minute or two after VM deployment. After the command succeeds, the output should look similar to the following example:
+    
+    TextCopy
+    
+    ```
+    traceroute to private.kzffavtrkpeulburui2lgywxwg.gx.internal.cloudapp.net (10.0.1.4), 64 hops max
+    1   10.0.2.4  0.710ms  0.410ms  0.536ms
+    2   10.0.1.4  0.966ms  0.981ms  1.268ms
+    Connection to 52.165.151.216 closed.
+    ```
+    
+    Notice that the first hop is to 10.0.2.4. This address is the private IP address of **nva**. The second hop is to 10.0.1.4, the address of **private**. In the first exercise, you added this route to the route table and linked the table to the **publicsubnet** subnet. So now all traffic from **public** to **private** is routed through the NVA.
+    
+    ![Diagram of route from public to private.](https://learn.microsoft.com/en-us/training/modules/control-network-traffic-flow-with-routes/media/6-public-private-route.svg)
+    
+2. Run the following command to trace the route from **private** to **public**. When prompted, enter the password for the **azureuser** account.
+    
+    BashCopy
+    
+    ```
+    ssh -t -o StrictHostKeyChecking=no azureuser@$PRIVATEIP 'traceroute public --type=icmp; exit'
+    ```
+    
+    You should see the traffic go directly to **public** (10.0.0.4) and not through the NVA, as shown in the following command output.
+    
+    TextCopy
+    
+    ```
+    traceroute to public.kzffavtrkpeulburui2lgywxwg.gx.internal.cloudapp.net (10.0.0.4), 64 hops max
+    1   10.0.0.4  1.095ms  1.610ms  0.812ms
+    Connection to 52.173.21.188 closed.
+    ```
+    
+    The **private** VM is using default routes, and traffic is routed directly between the subnets.
+    
+    ![Diagram of route from private to public.](https://learn.microsoft.com/en-us/training/modules/control-network-traffic-flow-with-routes/media/6-private-public-route.svg)
+    
+
+You've now configured routing between subnets to direct traffic from the public internet through the **dmzsubnet** subnet before it reaches the private subnet. In the **dmzsubnet** subnet, you added a VM that acts as an NVA. You can configure this NVA to detect potentially malicious requests and block them before they reach their intended targets.
+
+---
+
+# Improve application scalability and resiliency by using Azure Load Balancer
+
+# Introduction
+
+Many apps need to be resilient to failure and scale easily when demand increases. You can address those needs by using Azure Load Balancer.
+
+Suppose you work for a healthcare organization that's launching a new portal application with which patients can schedule appointments. The application has a patient portal, a web-application front end, and a business-tier database. The front end uses the database to retrieve and save patient information.
+
+The new portal needs to be available around the clock to handle failures. The portal must adjust to load fluctuations by adding and removing resources to match the load. The organization needs a solution that distributes work to virtual machines across the system as virtual machines are added. The solution should detect failures and reroute jobs to virtual machines as needed. Improved resiliency and scalability help ensure that patients can schedule appointments from any location.
+
+By the end of this module, you're able to use Azure Load Balancer to build a resilient and scalable app architecture.
+
+## Learning objectives
+
+In this module, you'll:
+
+- Identify the features and capabilities of Azure Load Balancer.
+- Deploy and configure an instance of Azure Load Balancer.
+
+## Prerequisites
+
+- Basic knowledge of networking concepts.
+- Basic knowledge of Azure virtual machines.
+- Familiarity with the Azure portal.
+
+# Azure Load Balancer features and capabilities
+
+With Azure Load Balancer, you can spread user requests across multiple virtual machines or other services. It allows you to scale the app to larger sizes than a single virtual machine can support, and ensures that users get service even when a virtual machine fails.
+
+In your healthcare organization, you can expect large user demand. It's vitally important that each user can book an appointment, even during peak demand or when one or more virtual machines fail. By using multiple virtual servers for your front end with a load balancer to distribute traffic among them, you achieve a high capacity because all the virtual servers collaborate to satisfy requests. You also improve resilience because the load balancer can automatically reroute traffic when a virtual server fails.
+
+Here, you learn how Load Balancer's features can help you create robust app architectures.
+
+## Distribute traffic with Azure Load Balancer
+
+Azure Load Balancer is a service you can use to distribute traffic across multiple virtual machines. Use Load Balancer to scale applications and create high availability for your virtual machines and services. Load balancers use a hash-based distribution algorithm. **By default, a five-tuple hash is used to map traffic to available servers.** The hash is made from the following elements:
+
+- **Source IP**: The IP address of the requesting client.
+- **Source port**: The port of the requesting client.
+- **Destination IP**: The destination IP of the request.
+- **Destination port**: The destination port of the request.
+- **Protocol type**: The specified protocol type. Transmission Control Protocol (TCP) or User Datagram Protocol (UDP).
+
+![Diagram showing an overview of Azure Load Balancer.](https://learn.microsoft.com/en-us/training/modules/improve-app-scalability-resiliency-with-load-balancer/media/2-load-balancer-distribution.svg)
+
+Load Balancer supports inbound and outbound scenarios, provides low latency and high throughput, and scales up to millions of flows for TCP and UDP applications.
+
+Load balancers aren't physical instances. Load-balancer objects are used to express how Azure configures its infrastructure to meet your requirements.
+
+With Load Balancer, you can use availability sets and availability zones to ensure that virtual machines are always available:
+
+Expand table
+
+|Configuration|Service level agreement (SLA)|Information|
+|---|---|---|
+|**Availability set**|99.95%|Protection from hardware failures within datacenters|
+|**Availability zone**|99.99%|Protection from entire datacenter failure|
+
+### Availability sets
+
+An availability set is a logical grouping used to isolate virtual machine resources from each other when they're deployed. Azure ensures that the virtual machines you put in an availability set run across multiple physical servers, compute racks, storage units, and network switches. If there's a hardware or software failure, only a subset of your virtual machines is affected. Your overall solution stays operational. Availability sets are essential for building reliable cloud solutions.
+
+![Diagram showing an overview of availability sets in Azure.](https://learn.microsoft.com/en-us/training/modules/improve-app-scalability-resiliency-with-load-balancer/media/2-availability-sets.svg)
+
+### Availability zones
+
+An availability zone offers groups of one or more datacenters that have independent power, cooling, and networking. The virtual machines in an availability zone are placed in different physical locations within the same region. Use this architecture when you want to ensure that you can continue to serve users when an entire datacenter fails.
+
+![Diagram showing an overview of availability zones in Azure.](https://learn.microsoft.com/en-us/training/modules/improve-app-scalability-resiliency-with-load-balancer/media/2-az-graphic-two.svg)
+
+Availability zones don't support all virtual machine sizes and aren't available in all Azure regions. Check that they're supported in your region before you use them in your architecture.
+
+## Select the right Load Balancer product
+
+Two products are available when you create a load balancer in Azure: _basic_ load balancers and _standard_ load balancers.
+
+Basic load balancers allow:
+
+- Port forwarding
+- Automatic reconfiguration
+- Health probes
+- Outbound connections through source network address translation (SNAT)
+- Diagnostics through Azure Log Analytics for public-facing load balancers
+
+You can only use basic load balancers with a single availability set or scale set.
+
+Standard load balancers support all of the basic load balancer features. They also allow:
+
+- HTTPS health probes
+- Availability zones
+- Diagnostics through Azure Monitor, for multidimensional metrics
+- High availability (HA) ports
+- Outbound rules
+- A guaranteed SLA (99.99% for two or more virtual machines)
+
+## Internal and external load balancers
+
+An external load balancer operates by distributing client traffic across multiple virtual machines. An external load balancer permits traffic from the internet. The traffic might come from browsers, mobile apps, or other sources. In a healthcare organization, the balancer distributes the load of all the browsers that run the client healthcare application.
+
+An internal load balancer distributes a load from internal Azure resources to other Azure resources. For example, if you have front-end web servers that need to call the business logic hosted on multiple middle-tier servers, you can distribute that load evenly by using an internal load balancer. No traffic is allowed from internet sources. In a healthcare organization, a load balancer distributes a load across the internal application tier.
+
+
+# Configure a public load balancer
+
+As the solution architect for the healthcare portal, you need to distribute the load from the client browsers over the virtual machines in your web farm. You need to set up a load balancer and configure the virtual machines to be balanced.
+
+A public load balancer maps the public IP address and port number of incoming traffic to the private IP address and port number of a virtual machine in the back-end pool. The responses are then returned to the client. By applying load-balancing rules, you can distribute specific types of traffic across multiple virtual machines or services.
+
+## Distribution modes
+
+By default, Azure Load Balancer distributes network traffic equally among virtual machine instances. The following distribution modes are also possible if a different behavior is required:
+
+- **Five-tuple hash**: The default distribution mode for Load Balancer is a five-tuple hash. The tuple is composed of source IP, source port, destination IP, destination port, and protocol type. Because the source port is included in the hash and the source port changes for each session, clients might be directed to a different virtual machine for each session.
+    
+    ![Diagram showing how hash-based distribution works.](https://learn.microsoft.com/en-us/training/modules/improve-app-scalability-resiliency-with-load-balancer/media/3-load-balancer-distribution.svg)
+    
+- **Source IP affinity**: This distribution mode is also known as _session affinity_ or _client IP affinity_. To map traffic to the available servers, the source IP affinity mode uses a two-tuple hash (from the source IP address and destination IP address) or a three-tuple hash (from the source IP address, destination IP address, and protocol type). The hash ensures that requests from a specific client are always sent to the same virtual machine behind the load balancer.
+    
+    ![Diagram showing how session affinity works.](https://learn.microsoft.com/en-us/training/modules/improve-app-scalability-resiliency-with-load-balancer/media/3-load-balancer-session-affinity.svg)
+    
+
+## Choose a distribution mode
+
+In the healthcare-portal example, imagine that a developer requirement of the presentation tier is to use in-memory sessions to store the signed-in user's profile as the user interacts with the portal.
+
+In this scenario, the load balancer must provide source IP affinity to maintain a user's session. The profile is stored only on the virtual machine to which the client first connects, because that IP address is directed to the same server. When you create the load-balancer endpoint, you must specify the distribution mode by using the following PowerShell example:
+
+PowerShellCopy
+
+```
+$lb = Get-AzLoadBalancer -Name MyLb -ResourceGroupName MyResourceGroup
+$lb.LoadBalancingRules[0].LoadDistribution = 'sourceIp'
+Set-AzLoadBalancer -LoadBalancer $lb
+```
+
+To add session persistence through the Azure portal:
+
+1. In the Azure portal, select your Load Balancer resource.
+    
+2. In the **Load balancing rules** page under the _Settings_ pane, select the relevant load balancing rule.
+    
+    ![Screenshot showing how to select a load balancing rule in the Azure portal.](https://learn.microsoft.com/en-us/training/modules/improve-app-scalability-resiliency-with-load-balancer/media/3-load-balancer-rules.png)
+    
+3. In the _load balancing rule settings_ page, change the value for **Session persistence** from **None** to **Client IP**.
+    
+
+![Screenshot showing how to set IP affinity in the Azure portal.](https://learn.microsoft.com/en-us/training/modules/improve-app-scalability-resiliency-with-load-balancer/media/3-screenshot-session-persistence.png)
+
+## Load Balancer and Remote Desktop Gateway
+
+Remote Desktop Gateway is a Windows service that enables clients on the internet to make Remote Desktop Protocol (RDP) connections through firewalls to Remote Desktop servers on your private network. The default five-tuple hash in Load Balancer is incompatible with this service. If you want to use Load Balancer with your Remote Desktop servers, use source IP affinity.
+
+## Load Balancer and media upload
+
+Another use case for source IP affinity is media upload. In many implementations, a client initiates a session through a Transmission Control Protocol (TCP) protocol and connects to a destination IP address. This connection remains open throughout the upload to monitor progress, but the file is uploaded through a separate User Datagram Protocol (UDP) protocol.
+
+With the five-tuple hash, the load balancer likely sends the TCP and UDP connections to different destination IP addresses and the upload doesn't finish successfully. Use source IP affinity to resolve this issue.
+
+# Exercise - Configure a public load balancer
+
+
+You can configure Azure Load Balancer by using the Azure portal, PowerShell, or the Azure CLI.
+
+In your healthcare organization, you want to load-balance client traffic to provide a consistent response based on the patient portal web servers' health. You have two virtual machines (VMs) in an availability set to act as your healthcare-portal web application.
+
+Here, you create a load balancer resource and use it to distribute a load across the virtual machines.
+
+## Deploy the patient portal web application
+
+First, deploy your patient-portal application across two virtual machines in a single availability set. To save time, let's start by running a script to create this application. The script:
+
+- Creates a virtual network and network infrastructure for the virtual machines.
+- Creates two virtual machines in this virtual network.
+
+To deploy the patient portal web application:
+
+1. Run the following `git clone` command in Azure Cloud Shell. The command clones the repo that contains the source for the app and runs the setup script from GitHub. Then changes to the directory of the cloned repo.
+    
+    BashCopy
+    
+    ```
+    git clone https://github.com/MicrosoftDocs/mslearn-improve-app-scalability-resiliency-with-load-balancer.git
+    cd mslearn-improve-app-scalability-resiliency-with-load-balancer
+    ```
+    
+2. As its name suggests, the script generates two virtual machines in a single availability set. It takes about two minutes to run.
+    
+    BashCopy
+    
+    ```
+    bash create-high-availability-vm-with-sets.sh [sandbox resource group name]
+    ```
+    
+3. When the script finishes, on the [Azure portal](https://portal.azure.com/learn.docs.microsoft.com) menu or from the **Home** page, select **Resource groups**, then select the **[sandbox resource group name]** resource group. Review the resources created by the script.
+    
+
+## Create a load balancer
+
+Let's use the Azure CLI to create the load balancer and its associated resources.
+
+1. Create a new public IP address.
+    
+    Azure CLICopy
+    
+    ```
+    az network public-ip create \
+      --resource-group [sandbox resource group name] \
+      --allocation-method Static \
+      --name myPublicIP
+    ```
+    
+2. Create the load balancer.
+    
+    Azure CLICopy
+    
+    ```
+    az network lb create \
+      --resource-group [sandbox resource group name] \
+      --name myLoadBalancer \
+      --public-ip-address myPublicIP \
+      --frontend-ip-name myFrontEndPool \
+      --backend-pool-name myBackEndPool
+    ```
+    
+3. Create a health probe that allows the load balancer to monitor the healthcare portal's status. The health probe dynamically adds or removes virtual machines from the load-balancer rotation based on their response to health checks.
+    
+    Azure CLICopy
+    
+    ```
+    az network lb probe create \
+      --resource-group [sandbox resource group name] \
+      --lb-name myLoadBalancer \
+      --name myHealthProbe \
+      --protocol tcp \
+      --port 80  
+    ```
+    
+4. Now, you need a load balancer rule to define how traffic is distributed to the virtual machines. You define the front-end IP configuration for the incoming traffic and the back-end IP pool to receive the traffic, along with the required source and destination port. To make sure only healthy virtual machines receive traffic, you also define the health probe to use.
+    
+    Azure CLICopy
+    
+    ```
+    az network lb rule create \
+      --resource-group [sandbox resource group name] \
+      --lb-name myLoadBalancer \
+      --name myHTTPRule \
+      --protocol tcp \
+      --frontend-port 80 \
+      --backend-port 80 \
+      --frontend-ip-name myFrontEndPool \
+      --backend-pool-name myBackEndPool \
+      --probe-name myHealthProbe
+    ```
+    
+5. Connect the virtual machines to the back-end pool by updating the network interfaces that the script created to use the back-end pool information.
+    
+    Azure CLICopy
+    
+    ```
+    az network nic ip-config update \
+      --resource-group [sandbox resource group name] \
+      --nic-name webNic1 \
+      --name ipconfig1 \
+      --lb-name myLoadBalancer \
+      --lb-address-pools myBackEndPool
+    
+    az network nic ip-config update \
+      --resource-group [sandbox resource group name] \
+      --nic-name webNic2 \
+      --name ipconfig1 \
+      --lb-name myLoadBalancer \
+      --lb-address-pools myBackEndPool
+    ```
+    
+6. Run the following command to get the load balancer's public IP address and your website's URL:
+    
+    Azure CLICopy
+    
+    ```
+    echo http://$(az network public-ip show \
+                    --resource-group [sandbox resource group name] \
+                    --name myPublicIP \
+                    --query ipAddress \
+                    --output tsv)
+    ```
+    
+
+## Test the load balancer configuration
+
+Let's test the load balancer setup, by showing how it can handle availability and health issues dynamically.
+
+1. In a new browser tab, go to the public IP address that you noted. A response from one of the virtual machines is displayed in the browser.
+    
+2. Try a "force refresh" by pressing Ctrl+F5 a few times to see that the response is returned randomly from both virtual machines.
+    
+3. On the [Azure portal](https://portal.azure.com/learn.docs.microsoft.com) menu or from the **Home** page, select **All resources**. Then select **webVM1**, and select **Stop**.
+    
+4. Return to the tab that shows the website and force a refresh of the webpage. All requests are returned from **webVM2**.
+
+# Internal load balancer
+
+In addition to balancing requests from users to front-end servers, you can use Azure Load Balancer to distribute traffic from front-end servers evenly among back-end servers.
+
+In your healthcare organization, front-end servers call business logic services hosted on a middle tier. You want to ensure that the middle tier is as scalable and resilient as the front end. You want to use a load balancer to distribute requests from the front-end servers evenly among the middle-tier servers. This way, you can scale out the middle-tier servers to achieve the highest capacity possible. You also ensure that the middle tier is resilient to failure. When a server fails, the load balancer automatically reroutes traffic to another server.
+
+Here, you learn how to use load balancers to distribute internal traffic.
+
+## Configure an internal load balancer
+
+In the healthcare-portal scenario, a web tier handles requests from users. The web tier connects to databases to retrieve data for users. The database tier is also deployed on two virtual machines. To allow the front-end web portal to continue to serve client requests if a database server fails, you can set up an internal load balancer to distribute traffic to the database servers.
+
+You can configure an internal load balancer in almost the same way as an external load balancer, but with these differences:
+
+- When you create the load balancer, select **Internal** for the **Type** value. When you select this setting, the load balancer's front-end IP address isn't exposed to the internet.
+- Assign a private IP address instead of a public IP address for the load balancer's front end.
+- Place the load balancer in the protected virtual network that contains the virtual machines you want to handle the requests.
+
+The internal load balancer should be visible only to the web tier. All the virtual machines that host the databases are in one subnet. You can use an internal load balancer to distribute traffic to those virtual machines.
+
+![Diagram showing internal load balancer.](https://learn.microsoft.com/en-us/training/modules/improve-app-scalability-resiliency-with-load-balancer/media/5-internal-load-balancer.svg)
+
+## Choose the distribution mode
+
+In the healthcare portal, the application tier is stateless, so you don't need to use source IP affinity. You can use the default distribution mode of a five-tuple hash. This mode offers the greatest scalability and resilience. The load balancer routes traffic to any healthy server.
+
