@@ -116,9 +116,9 @@ Let's take a look at how Azure Backup works to provide the data protection you n
 
 The simplest explanation of Azure Backup is that it backs up data, machine state, and workloads running on on-premises machines and VM instances to the Azure cloud. Azure Backup stores the backed-up data in Recovery Services vaults and Backup vaults.
 
-For on-premises Windows machines, you can back up directly to Azure with the Azure Backup Microsoft Azure Recovery Services (MARS) agent. Alternatively, you can back up these Windows machines to a backup server, perhaps a System Center Data Protection Manager (DPM) or Microsoft Azure Backup Server (MABS). You can then back that server up to a Recovery Services vault in Azure.
+For **on-premises** Windows machines, you can back up directly to Azure with the **Azure Backup Microsoft Azure Recovery Services (MARS) agent**. Alternatively, you can back up these Windows machines to a backup server, perhaps a **System Center Data Protection Manager (DPM) or Microsoft Azure Backup Server (MABS).** You can then back that server up to a Recovery Services vault in Azure.
 
-If you're using Azure VMs, you can back them up directly. Azure Backup installs a backup extension to the Azure VM agent that's running on the VM, which allows you to back up the entire VM. If you only want to back up the files and folders on the VM, you can do so by running the MARS agent.
+If you're using **Azure VMs**, you can back them up **directly**. **Azure Backup** installs a backup extension to the Azure VM agent that's running on the VM, which allows you to back up the entire VM. If you only want to back up the files and folders on the VM, you can do so by running the **MARS agent.**
 
 Azure Backup stores backed-up data in vaults: Recovery Services vaults and Backup vaults. A vault is an online-storage entity in Azure that's used to hold data such as backup copies, recovery points, and backup policies.
 
@@ -797,28 +797,11 @@ Azure Network Watcher is a powerful tool that allows you to monitor, diagnose, a
 
 Imagine you're an IT administrator for a large e-commerce company. Your company relies heavily on its Azure virtual network to host its website and handle customer transactions. One day, you receive reports from customers that they're unable to access the website or complete their purchases. You need to quickly identify the cause of the connectivity issues and resolve them to minimize the impact on your business.
 
-Your organization plans to use Network Watcher. Network Watcher's monitoring and diagnostic capabilities let you easily pinpoint the root cause of the problem and take appropriate actions. By using features such as IP flow verification, next hop analysis, and connection troubleshooting, you can ensure that your virtual network is functioning optimally.
+Your organization plans to use Network Watcher. Network Watcher's monitoring and diagnostic capabilities let you easily pinpoint the root cause of the problem and take appropriate actions. By using features such as **IP flow verification, next hop analysis, and connection troubleshooting**, you can ensure that your virtual network is functioning optimally.
 
 In this module, you learn about the various features and use cases of Azure Network Watcher. The topics covered include IP flow verification, next hop analysis, and the topology tool. The module guides you on how to diagnose network configuration issues, such as broken security rules.
 
 The goal of this module is to provide you with a comprehensive understanding of Azure Network Watcher and its capabilities. By the end of this module, you effectively monitor, diagnose, and manage your Azure virtual network using Network Watcher.
-
-## Learning objectives
-
-In this module, you learn how to:
-
-- Identify the features and usage cases for Azure Network Watcher.
-- Configure diagnostic capabilities like IP flow verify, next hop, and network topology.
-
-## Skills measured
-
-The content in the module helps you prepare for [Exam AZ-104: Microsoft Azure Administrator](https://learn.microsoft.com/en-us/certifications/exams/az-104).
-
-## Prerequisites
-
-- Knowledge of Azure networking features such as virtual networks and traffic routes.
-    
-- Familiarity with how to systematically troubleshoot an issue.
 
 # Describe Azure Network Watcher features
 

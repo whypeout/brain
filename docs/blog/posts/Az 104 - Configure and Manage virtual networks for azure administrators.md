@@ -352,25 +352,6 @@ In this module, you learn how to create a network security group, configure inbo
 
 The goal of this module is to teach you how to control network traffic with network security groups.
 
-## Learning objectives
-
-In this module, you learn how to:
-
-- Determine when to use network security groups.
-- Create network security groups.
-- Implement and evaluate network security group rules.
-- Describe the function of application security groups.
-
-## Skills measured
-
-The content in the module helps you prepare for [Exam AZ-104: Microsoft Azure Administrator](https://learn.microsoft.com/en-us/certifications/exams/az-104).
-
-## Prerequisites
-
-- Familiarity with Azure virtual networks and resources such as virtual machines.
-- Working knowledge of the Azure portal so you can configure the network security groups.
-- Basic understanding of traffic routing and traffic control strategies.
-
 # Implement network security groups
 
 

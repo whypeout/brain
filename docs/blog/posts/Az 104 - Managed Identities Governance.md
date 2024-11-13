@@ -185,26 +185,6 @@ In this module, you learn about user accounts and group accounts. You learn abou
 
 The goal of this module is to successfully create and manage user and group accounts.
 
-## Learning objectives
-
-In this module, you learn how to:
-
-- Create and configure user accounts including account properties and bulk updates.
-    
-- Create and configure group accounts including assigning group members.
-    
-- Use administrative units to control administrator access.
-    
-
-## Skills measured
-
-The content in the module helps you prepare for [Exam AZ-104: Microsoft Azure Administrator](https://learn.microsoft.com/en-us/credentials/certifications/exams/az-104/).
-
-## Prerequisites
-
-- Understand basic concepts of centralized identity solutions. This knowledge includes identities, accounts, and authentication methods.
-    
-- Familiarity with managing user and group accounts, including the principle of least privilege.
 # Create user accounts
 
 Every user who wants access to Azure resources needs an Azure user account. A user account has all the information required to authenticate the user during the sign-in process. Microsoft Entra ID supports three types of user accounts. The types indicate where the user is defined (in the cloud or on-premises), and whether the user is internal or external to your Microsoft Entra organization.
