@@ -1,3 +1,11 @@
+---
+draft: false
+date: 2024-11-14
+slug: Az 104 - Monitor and backup azure resources
+tags:
+  - azure
+  - az104
+---
 
 # Introduction to Azure Backup
 

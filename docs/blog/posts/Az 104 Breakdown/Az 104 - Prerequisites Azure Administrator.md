@@ -1,3 +1,11 @@
+---
+draft: false
+date: 2024-11-14
+slug: Az 104 - Prerequisites Azure Administrator
+tags:
+  - azure
+  - az104
+---
 # Introduction to Azure Cloud Shell
 
 Azure Cloud Shell is a command-line environment you can access through your web browser. You can use this environment to manage Azure resources, including VMs, storage, and networking. Just like you do when using the Azure CLI or Azure PowerShell.
