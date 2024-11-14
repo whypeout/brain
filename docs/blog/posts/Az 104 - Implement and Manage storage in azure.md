@@ -149,7 +149,6 @@ Azure Storage offers several storage account options. Each [storage account](ht
 
 Review the following options and think about what storage accounts are required to support your applications.
 
-Expand table
 
 |Storage account|Supported services|Recommended usage|
 |---|---|---|
