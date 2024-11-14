@@ -1,0 +1,1238 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="../Az%20104%20-%20Monitor%20and%20backup%20azure%20resources/">
+      
+      
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../../../../feed_rss_updated.xml">
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.44">
+    
+    
+      
+        <title>Introduction to Azure Cloud Shell - Atoni Brain Washed</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="pink" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#introduction-to-azure-cloud-shell" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Atoni Brain Washed" class="md-header__button md-logo" aria-label="Atoni Brain Washed" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Atoni Brain Washed
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Introduction to Azure Cloud Shell
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="pink" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="pink" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Atoni Brain Washed" class="md-nav__button md-logo" aria-label="Atoni Brain Washed" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Atoni Brain Washed
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Obsidian Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Features
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Features/LaTeX%20Math%20Support/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LaTeX Math Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Features/Mermaid%20Diagrams/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mermaid diagrams
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Features/Text%20Formatting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Text Formatting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Topic 1
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Topic 1
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Topic%201/Note%201/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Note 1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../Topic%201/Note%202/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Note 2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Archive
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            Archive
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2024/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2024
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2024-11-14 00:00:00" class="md-ellipsis">November 14, 2024</time>
+                      </div>
+                    </li>
+                    
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              25 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+          </nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+
+
+<h1 id="introduction-to-azure-cloud-shell">Introduction to Azure Cloud Shell<a class="headerlink" href="#introduction-to-azure-cloud-shell" title="Permanent link">&para;</a></h1>
+<p>Azure Cloud Shell is a command-line environment you can access through your web browser. You can use this environment to manage Azure resources, including VMs, storage, and networking. Just like you do when using the Azure CLI or Azure PowerShell.</p>
+<p>Because Microsoft manages Cloud Shell, you always have access to the most recent versions of the Azure CLI and PowerShell modules right from any browser. You don't have to worry about keeping modules up to date. With Cloud Shell, you just open your browser and sign in. Just like that, you have access to a command-line environment fully connected with your account's permissions and the resources to which you have access. All that works in an infrastructure that's compliant with double encryption at rest by default. You don't need to take any further action!</p>
+<p>Azure Cloud Shell also provides cloud storage to persist files such as SSH keys, scripts, and more. This functionality lets you access important files in between sessions and with different machines. Finally, you can use the Cloud Shell editor to make changes to files, such as scripts, that are saved into this cloud storage directly from the Cloud Shell interface.</p>
+<hr />
+<h1 id="how-does-azure-cloud-shell-work">How does Azure Cloud Shell work?<a class="headerlink" href="#how-does-azure-cloud-shell-work" title="Permanent link">&para;</a></h1>
+<p>As an IT admin for Contoso Corporation, you're frequently on-call to perform administrative tasks and resolve workload disruptions to resources in your organization's Azure subscriptions. When visiting a family member during a weekend that you're on call, the development team notifies you of a problem with an Azure virtual machine (VM). The VM became nonresponsive during scheduled maintenance for the upgrade of an application that runs on it. Because the developers weren't granted access to the underlying Azure virtual machine hosting infrastructure, they're only able to remotely access the VM when it's operating normally. So, you're being called to diagnose and remediate the problem.</p>
+<p>Since you're visiting family, you don’t have access to your administrative workstation and diagnostic scripts. You do have access to a laptop with an internet browser. Using the laptop, you browse to the Azure portal, authenticate against your organization’s Azure subscription, open Azure Cloud Shell, mount an Azure File Share, access your diagnostic scripts, and diagnose and remediate the problems with the VM, returning it to operation.</p>
+<h2 id="access-cloud-shell">Access Cloud Shell<a class="headerlink" href="#access-cloud-shell" title="Permanent link">&para;</a></h2>
+<p>You have a few different options for accessing Azure Cloud Shell:</p>
+<ul>
+<li>
+<p>From a direct link: <a href="https://shell.azure.com/">https://shell.azure.com</a></p>
+<p><a href="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/access-cloud-shell-directly.png#lightbox"><img alt="A screenshot of Cloud Shell accessed directly from a link." src="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/access-cloud-shell-directly.png" /></a></p>
+</li>
+<li>
+<p>From the Azure portal</p>
+<p><a href="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/access-cloud-shell-from-azure-portal.png#lightbox"><img alt="A screenshot of Cloud Shell accessed from Azure portal." src="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/access-cloud-shell-from-azure-portal.png" /></a></p>
+</li>
+<li>
+<p>From code snippets when accessing Microsoft Learn:</p>
+<p><a href="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/access-cloud-shell-from-code-snippets.png#lightbox"><img alt="A screenshot of Cloud Shell accessed from code snippets." src="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/access-cloud-shell-from-code-snippets.png" /></a></p>
+</li>
+</ul>
+<p>When you open a Cloud Shell session, a temporary host is allocated to your session. This VM is preconfigured with the latest versions of PowerShell and Bash. You can then select the command-line experience you want to use:</p>
+<p><a href="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/select-cli-experience.png#lightbox"><img alt="A screenshot of how to choose a command-line experience in a Cloud Shell session." src="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/select-cli-experience.png" /></a></p>
+<p>After you select the shell experience you want to use, you can start managing your Azure resources:</p>
+<p><a href="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/manage-azure-resources-in-cloud-shell.png#lightbox"><img alt="A screenshot of how to use Cloud Shell to manage Azure resources." src="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/manage-azure-resources-in-cloud-shell.png" /></a></p>
+<p>Cloud Shell sessions terminate after 20 minutes of inactivity. When a session terminates, files on your CloudDrive are persisted, but you need to start a new session to access the Cloud Shell environment.</p>
+<h2 id="access-your-own-scripts-and-files">Access your own scripts and files<a class="headerlink" href="#access-your-own-scripts-and-files" title="Permanent link">&para;</a></h2>
+<p>When using Cloud Shell, you might also need to run scripts or use files for different actions. You can persist files on Cloud Shell by using the Azure CloudDrive:</p>
+<p><a href="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/use-azure-cloud-drive.png#lightbox"><img alt="A screenshot of how to access CloudDrive in a Cloud Shell session." src="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/use-azure-cloud-drive.png" /></a></p>
+<p>After uploading files, you can interact with them as you would in a regular PowerShell or Bash session:</p>
+<p><a href="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/manage-files-in-cloud-drive.png#lightbox"><img alt="A screenshot of how to manage files in CloudDrive." src="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/manage-files-in-cloud-drive.png" /></a></p>
+<p>Now that your file resides on CloudDrive, you can close the session and open another session on a different device and still access the same file. Cloud Shell also lets you map an Azure Storage File Share, which is tied to a specific region. Access to an Azure File Share lets you work with the contents of that share through Cloud Shell.</p>
+<p>If you need to edit scripts hosted on the CloudDrive or File Share, you can use the Cloud Shell editor. Select the curly brackets {} icon on the browser and open the file you want to edit, or use the command <code>code</code> and specify the filename; for example:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>code temp.txt
+</code></pre></div>
+<p><a href="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/cloud-shell-edit-scripts.png#lightbox"><img alt="A screenshot of how to access the Cloud Shell editor mode." src="https://learn.microsoft.com/en-us/training/modules/intro-to-azure-cloud-shell/media/cloud-shell-edit-scripts.png" /></a></p>
+<p>Note</p>
+<p>The <code>code</code> command only works in the Classic mode in Cloud Shell. To enable Classic mode, select the <strong>More</strong> icon (<strong>...</strong>), then select <strong>Settings</strong> &gt; <strong>Go to Classic version</strong>.</p>
+<h2 id="cloud-shell-tools">Cloud Shell tools<a class="headerlink" href="#cloud-shell-tools" title="Permanent link">&para;</a></h2>
+<p>If you need to manage resources (such as Docker containers or Kubernetes Clusters) or want to use non-Microsoft tools (such as Ansible and Terraform) in Cloud Shell, the Cloud Shell session comes with these add-ons already preconfigured.</p>
+<p>Here’s a list of all add-ons available to you within a Cloud Shell session:</p>
+<p>Expand table</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Linux tools</strong></td>
+<td>bash  <br>zsh  <br>sh  <br>tmux  <br>dig</td>
+</tr>
+<tr>
+<td><strong>Azure tools</strong></td>
+<td>Azure CLI and <a href="https://github.com/Azure/azure-xplat-cli">Azure classic CLI</a>  <br>AzCopy  <br>Azure Functions CLI  <br>Service Fabric CLI  <br>Batch Shipyard  <br>blobxfer</td>
+</tr>
+<tr>
+<td><strong>Text editors</strong></td>
+<td>code (Cloud Shell editor)  <br>vim  <br>nano  <br>emacs</td>
+</tr>
+<tr>
+<td><strong>Source control</strong></td>
+<td>git</td>
+</tr>
+<tr>
+<td><strong>Build tools</strong></td>
+<td>make  <br>maven  <br>npm  <br>pip</td>
+</tr>
+<tr>
+<td><strong>Containers</strong></td>
+<td>Docker Machine  <br>Kubectl  <br>Helm  <br>DC/OS CLI</td>
+</tr>
+<tr>
+<td><strong>Databases</strong></td>
+<td>MySQL client  <br>PostgreSql client  <br>sqlcmd Utility  <br>mssql-scripter</td>
+</tr>
+<tr>
+<td><strong>Other</strong></td>
+<td>iPython Client  <br>Cloud Foundry CLI  <br>Terraform  <br>Ansible  <br>Chef InSpec  <br>Puppet Bolt  <br>HashiCorp Packer  <br>Office 365 CLI</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="when-should-you-use-azure-cloud-shell">When should you use Azure Cloud Shell?<a class="headerlink" href="#when-should-you-use-azure-cloud-shell" title="Permanent link">&para;</a></h1>
+<p>As an IT Admin for Contoso Corporation, you need alternatives to interact with Azure resources from the command line even when not using your default administrative device.</p>
+<p>You can use Azure Cloud Shell to:</p>
+<ul>
+<li>Open a secure command-line session from any browser-based device.</li>
+<li>Interact with Azure resources without the need to install plug-ins or add-ons to your device.</li>
+<li>Persist files between sessions for later use.</li>
+<li>Use either Bash or PowerShell, whichever you prefer, to manage Azure resources.</li>
+<li>Edit files (such as scripts) via the Cloud Shell editor.</li>
+</ul>
+<p>You shouldn't use Azure Cloud Shell if:</p>
+<ul>
+<li>You intend to leave a session open for more than 20 minutes for long running scripts or activities. In these cases, your session is disconnected without warning, and the current state is lost.</li>
+<li>You need admin permissions, such as sudo access, from within the Azure CLI or PowerShell environment.</li>
+<li>You need to install tools that aren't supported in the limited Cloud Shell environment, but instead require an environment such as a custom virtual machine or container.</li>
+<li>You need storage from different regions. You might need to back up and synchronize this content since only one region can have the storage allocated to Azure Cloud Shell.</li>
+<li>You need to open multiple sessions at the same time. Azure Cloud Shell allows only one instance at time and isn't suitable for concurrent work across multiple subscriptions or tenants.</li>
+</ul>
+<hr />
+<h1 id="introduction-to-bash">Introduction to Bash<a class="headerlink" href="#introduction-to-bash" title="Permanent link">&para;</a></h1>
+<h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h1>
+<p>Imagine you just started a new job as a system administrator (sysadmin) at Northwind, a high-frequency trading (HFT) firm that runs Windows on its client computers and Linux on its server computers. Computers are the lifeblood of the company, and you need to learn more about how to manage Linux boxes. It's time to skill up!</p>
+<p>Bash is the standard shell scripting language for Linux. Let's learn the basics of Bash, starting with the syntax and commonly used commands, like <code>ls</code> and <code>cat</code>.</p>
+<h1 id="what-is-bash">What is Bash?<a class="headerlink" href="#what-is-bash" title="Permanent link">&para;</a></h1>
+<p>Bash is a vital tool for managing Linux machines. The name is short for "<strong>B</strong>ourne <strong>A</strong>gain <strong>Sh</strong>ell."</p>
+<p>A shell is a program that commands the operating system to perform actions. You can enter commands in a console on your computer and run the commands directly, or you can use scripts to run batches of commands. Shells like PowerShell and Bash give system administrators the power and precision they need for fine-tuned control of the computers they're responsible for.</p>
+<p>There are other Linux shells, including csh and zsh, but Bash became the de facto Linux standard. That's because Bash is compatible with Unix's first serious shell, the Bourne shell, also known as sh. Bash incorporates the best features of its predecessors. But Bash also has some fine features of its own, including built-in commands and the ability to invoke external programs.</p>
+<p>One reason for Bash's success is its simplicity. Bash, like the rest of Linux, is based on the Unix design philosophy. As Peter Salus summarized in his book <em>A Quarter Century of Unix</em>, three of the "big ideas" embodied in Unix are:</p>
+<ul>
+<li>Programs do one thing and do it well</li>
+<li>Programs work together</li>
+<li>Programs use text streams as the universal interface</li>
+</ul>
+<p>The last part is key to understanding how Bash works. In Unix and Linux, everything is a file. That means you can use the same commands without worrying about whether the I/O stream—the input and output—comes from a keyboard, a disk file, a socket, a pipe, or another I/O abstraction.</p>
+<p>Let's learn the basics of Bash, starting with the syntax and commonly used commands, like <code>ls</code> and <code>cat</code>.</p>
+<hr />
+<h1 id="bash-fundamentals">Bash fundamentals<a class="headerlink" href="#bash-fundamentals" title="Permanent link">&para;</a></h1>
+<p>An understanding of Bash starts with an understanding of Bash syntax. After you know the syntax, you can apply it to every Bash command you run.</p>
+<p>The full syntax for a Bash command is:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>command [options] [arguments]
+</code></pre></div>
+<p>Bash treats the first string it encounters as a command. The following command uses Bash's <code>ls</code> (for "list") command to display the contents of the current working directory:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls
+</code></pre></div>
+<p>Arguments often accompany Bash commands. For example, you can include a path name in an <code>ls</code> command to list the contents of another directory:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls /etc
+</code></pre></div>
+<p>Most Bash commands have options for modifying how they work. Options, also called <em>flags</em>, give a command more specific instructions. As an example, files and directories whose names begin with a period are hidden from the user and aren't displayed by <code>ls</code>. However, you can include the <code>-a</code> (for "all") flag in an <code>ls</code> command and see everything in the target directory:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls -a /etc
+</code></pre></div>
+<p>You can even combine flags for brevity. For example, rather than enter <code>ls -a -l /etc</code> to show all files and directories in Linux's <strong>/etc</strong> directory in long form, you can enter this instead:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls -al /etc
+</code></pre></div>
+<p>Bash is concise. It's sometimes remarkable (and a point of pride among Bash aficionados) how much you can accomplish with a single command.</p>
+<h2 id="get-help">Get help<a class="headerlink" href="#get-help" title="Permanent link">&para;</a></h2>
+<p>Which options and arguments can be used, or must be used, varies from command to command. Fortunately, Bash documentation is built into the operating system. Help is never more than a command away. To learn about the options for a command, use the <code>man</code> (for "manual") command. For instance, to see all the options for the <code>mkdir</code> ("make directory") command, do this:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>man mkdir
+</code></pre></div>
+<p><code>man</code> is your best friend as you learn Bash. <code>man</code> is how you find the information you need to understand how any command works.</p>
+<p>Most Bash and Linux commands support the <code>--help</code> option. This shows a description of the command's syntax and options. To demonstrate, enter <code>mkdir --help</code>. The output looks something like this:</p>
+<p>OutputCopy</p>
+<div class="highlight"><pre><span></span><code>Usage: mkdir [OPTION]... DIRECTORY...
+Create the DIRECTORY(ies), if they do not already exist.
+
+Mandatory arguments to long options are mandatory for short options too.
+  -m, --mode=MODE   set file mode (as in chmod), not a=rwx - umask
+  -p, --parents     no error if existing, make parent directories as needed
+  -v, --verbose     print a message for each created directory
+  -Z                   set SELinux security context of each created directory
+                         to the default type
+      --context[=CTX]  like -Z, or if CTX is specified then set the SELinux
+                         or SMACK security context to CTX
+      --help     display this help and exit
+      --version  output version information and exit
+
+GNU coreutils online help: &lt;http://www.gnu.org/software/coreutils/&gt;
+Report mkdir translation bugs to &lt;http://translationproject.org/team/&gt;
+Full documentation at: &lt;http://www.gnu.org/software/coreutils/mkdir&gt;
+or available locally via: info &#39;(coreutils) mkdir invocation&#39;
+</code></pre></div>
+<p>Help obtained this way is typically more concise than help obtained with <code>man</code>.</p>
+<h2 id="use-wildcards">Use wildcards<a class="headerlink" href="#use-wildcards" title="Permanent link">&para;</a></h2>
+<p>Wildcards are symbols that represent one or more characters in Bash commands. The most frequently used wildcard is the asterisk. It represents zero characters or a sequence of characters. Suppose your current directory contains hundreds of image files, but you only want to see the PNG files; the ones whose file names end with <strong>.png</strong>. Here's the command to list only those files:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls *.png
+</code></pre></div>
+<p>Note</p>
+<p>Linux has no formal concept of a file-name extension as other operating systems do. This doesn't mean that PNG files won't have a <strong>.png</strong> extension. It simply means Linux attaches no special significance to the fact that the file names end with <strong>.png</strong>.</p>
+<p>Now let's say the current directory also contains JPEG files. Some end in <strong>.jpg</strong>, while others end in <strong>.jpeg.</strong> Here's one way to list all the JPEG files:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls *.jpg *.jpeg
+</code></pre></div>
+<p>And here's another:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls *.jp*g
+</code></pre></div>
+<p>The <code>*</code> wildcard matches on zero or more characters, but the <code>?</code> wildcard represents a single character. If the current directory contains files named <strong>0001.jpg</strong>, <strong>0002.jpg</strong>, and so on through <strong>0009.jpg</strong>, the following command lists them all:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls 000?.jpg
+</code></pre></div>
+<p>Yet another way to use wildcards to filter output is to use square brackets, which denote groups of characters. The following command lists all the files in the current directory whose names contain a period immediately followed a lowercase J or P. It lists all the <strong>.jpg</strong>, <strong>.jpeg</strong>, and <strong>.png</strong> files, but not <strong>.gif</strong> files:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls *.[jp]*
+</code></pre></div>
+<p>In Linux, file names and the commands that operate upon them are case-sensitive. So to list all the files in the current directory whose names contain periods followed by an uppercase <em>or</em> lowercase J or P, you could enter this:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls *.[jpJP]*
+</code></pre></div>
+<p>Expressions in square brackets can represent ranges of characters. For example, the following command lists all the files in the current directory whose names begin with a lowercase letter:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls [a-z]*
+</code></pre></div>
+<p>This command, by contrast, lists all the files in the current directory whose names begin with an uppercase letter:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls [A-Z]*
+</code></pre></div>
+<p>And this one lists all the files in the current directory whose names begin with a lowercase <em>or</em> uppercase letter:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls [a-zA-Z]*
+</code></pre></div>
+<p>Based on all this, can you guess what the following commands do?</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls [0-9]*
+ls *[0-9]*
+ls *[0-9]
+</code></pre></div>
+<p>If you need to use one of the wildcard characters as an ordinary character, you make it literal or "escape it" by prefacing it with a backslash. So, if for some reason you had an asterisk as part of a file name—something you should never do intentionally—you could search for it by using a command such as:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>$ ls *\**
+</code></pre></div>
+<hr />
+<h1 id="bash-commands-and-operators">Bash commands and operators<a class="headerlink" href="#bash-commands-and-operators" title="Permanent link">&para;</a></h1>
+<p>Every shell language has its most-used commands. Let's start building your Bash repertoire by examining the most commonly used commands.</p>
+<h2 id="bash-commands">Bash commands<a class="headerlink" href="#bash-commands" title="Permanent link">&para;</a></h2>
+<p>Let's look at common Bash commands and how to use them.</p>
+<h3 id="ls-command"><code>ls</code> command<a class="headerlink" href="#ls-command" title="Permanent link">&para;</a></h3>
+<p><code>ls</code> lists the contents of your current directory or the directory specified in an argument to the command. By itself, it lists the files and directories in the current directory:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls
+</code></pre></div>
+<p>Files and directories whose names begin with a period are hidden by default. To include these items in a directory listing, use an <code>-a</code> flag:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls -a
+</code></pre></div>
+<p>To get even more information about the files and directories in the current directory, use an <code>-l</code> flag:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls -l
+</code></pre></div>
+<p>Here's some sample output from a directory that contains a handful of JPEGs and PNGs and a subdirectory named <strong>gifs</strong>:</p>
+<p>OutputCopy</p>
+<div class="highlight"><pre><span></span><code>-rw-rw-r-- 1 azureuser azureuser  473774 Jun 13 15:38 0001.png
+-rw-rw-r-- 1 azureuser azureuser 1557965 Jun 13 14:43 0002.jpg
+-rw-rw-r-- 1 azureuser azureuser  473774 Mar 26 09:21 0003.png
+-rw-rw-r-- 1 azureuser azureuser 4193680 Jun 13 09:40 0004.jpg
+-rw-rw-r-- 1 azureuser azureuser  423325 Jun 10 12:53 0005.jpg
+-rw-rw-r-- 1 azureuser azureuser 2278001 Jun 12 04:21 0006.jpg
+-rw-rw-r-- 1 azureuser azureuser 1220517 Jun 13 14:44 0007.jpg
+drwxrwxr-x 2 azureuser azureuser    4096 Jun 13 20:16 gifs
+</code></pre></div>
+<p>Each line provides detailed information about the corresponding file or directory. That information includes the permissions assigned to it, its owner, its size in bytes, the last time it was modified, and the file or directory name.</p>
+<h3 id="cat-command"><code>cat</code> command<a class="headerlink" href="#cat-command" title="Permanent link">&para;</a></h3>
+<p>Suppose you want to see what's inside a file. You can use the <code>cat</code> command for that. The output won't make much sense unless the file is a text file. The following command shows the contents of the <strong>os-release</strong> file stored in the <strong>/etc</strong> directory:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cat /etc/os-release
+</code></pre></div>
+<p>This is a useful command because it tells you which Linux distribution you're running:</p>
+<p>OutputCopy</p>
+<div class="highlight"><pre><span></span><code>NAME=&quot;Ubuntu&quot;
+VERSION=&quot;18.04.2 LTS (Bionic Beaver)&quot;
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME=&quot;Ubuntu 18.04.2 LTS&quot;
+VERSION_ID=&quot;18.04&quot;
+HOME_URL=&quot;https://www.ubuntu.com/&quot;
+SUPPORT_URL=&quot;https://help.ubuntu.com/&quot;
+BUG_REPORT_URL=&quot;https://bugs.launchpad.net/ubuntu/&quot;
+PRIVACY_POLICY_URL=&quot;https://www.ubuntu.com/legal/terms-and-policies/privacy-policy&quot;
+VERSION_CODENAME=bionic
+UBUNTU_CODENAME=bionic
+</code></pre></div>
+<p>The <strong>/etc</strong> directory is a special one in Linux. It contains system-configuration files. You don't want to delete any files from this directory unless you know what you're doing.</p>
+<h3 id="sudo-command"><code>sudo</code> command<a class="headerlink" href="#sudo-command" title="Permanent link">&para;</a></h3>
+<p>Some Bash commands can only be run by the root user; a system administrator or superuser. If you try one of these commands without sufficient privileges, it fails. For example, only users logged in as a superuser can use <code>cat</code> to display the contents of <strong>/etc/at.deny</strong>:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cat /etc/at.deny
+</code></pre></div>
+<p><strong>at.deny</strong> is a special file that determines who can use other Bash commands to submit jobs for later execution.</p>
+<p>You don't want to run as root most of the time; it's too dangerous. To run commands that require admin privilege without logging in as a superuser, you'll preface the commands with <code>sudo</code>:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>sudo cat /etc/at.deny
+</code></pre></div>
+<p><code>sudo</code> stands for "superuser do." When you use it, you're telling the shell that for this one command, you're acting with the root-user level of permission.</p>
+<h3 id="cd-mkdir-and-rmdir-commands"><code>cd</code>, <code>mkdir</code>, and <code>rmdir</code> commands<a class="headerlink" href="#cd-mkdir-and-rmdir-commands" title="Permanent link">&para;</a></h3>
+<p><code>cd</code> stands for "change directory," and it does exactly what the name suggests: it changes the current directory to another directory. It enables you to move from one directory to another just like its counterpart in Windows. The following command changes to a subdirectory of the current directory named <strong>orders</strong>:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cd orders
+</code></pre></div>
+<p>You can move up a directory by specifying <code>..</code> as the directory name:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cd ..
+</code></pre></div>
+<p>This command changes to your home directory; the one you land in when you first sign in:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cd ~
+</code></pre></div>
+<p>You can create directories by using the <code>mkdir</code> command. The following command creates a subdirectory named <strong>orders</strong> in the current working directory:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>mkdir orders
+</code></pre></div>
+<p>If you want to create a subdirectory and another subdirectory under it with one command, use the <code>--parents</code> flag:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>mkdir --parents orders/2019
+</code></pre></div>
+<p>The <code>rmdir</code> command deletes (removes) a directory, but only if it's empty. If it's not empty, you get a warning instead. Fortunately, you can use the <code>rm</code> command to delete directories that aren't empty in combination with the <code>-r</code> (recursive) flag. The command would then look like so, <code>rm -r</code>.</p>
+<h3 id="rm-command"><code>rm</code> command<a class="headerlink" href="#rm-command" title="Permanent link">&para;</a></h3>
+<p>The <code>rm</code> command is short for "remove." As you'd expect, <code>rm</code> deletes files. So this command puts an end to <strong>0001.jpg</strong>:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>rm 0001.jpg
+</code></pre></div>
+<p>And this command deletes all the files in the current directory:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>rm *
+</code></pre></div>
+<p>Be wary of <code>rm</code>. It's a dangerous command.</p>
+<p>Running <code>rm</code> with a <code>-i</code> flag lets you think before you delete:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>rm -i *
+</code></pre></div>
+<p>Make it a habit to include <code>-i</code> in every <code>rm</code> command, and you might avoid falling victim to one of Linux's biggest blunders. The dreaded <code>rm -rf /</code> command deletes every file on an entire drive. It works by recursively deleting all the subdirectories of root and their subdirectories. The <code>-f</code> (for "force") flag compounds the problem by suppressing prompts. <em>Don't do this.</em></p>
+<p>If you want to delete a subdirectory named <strong>orders</strong> that isn't empty, you can use the <code>rm</code> command this way:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>rm -r orders
+</code></pre></div>
+<p>This deletes the <strong>orders</strong> subdirectory and everything in it, including other subdirectories.</p>
+<h3 id="cp-command"><code>cp</code> command<a class="headerlink" href="#cp-command" title="Permanent link">&para;</a></h3>
+<p>The <code>cp</code> command copies not just files, but entire directories (and subdirectories) if you want. To make a copy of <strong>0001.jpg</strong> named <strong>0002.jpg</strong>, use this command:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cp 0001.jpg 0002.jpg
+</code></pre></div>
+<p>If <strong>0002.jpg</strong> already exists, Bash silently replaces it. That's great if it's what you intended, but not so wonderful if you didn't realize you were about to overwrite the old version.</p>
+<p>Fortunately, if you use the <code>-i</code> (for "interactive") flag, Bash warns you before deleting existing files. This is safer:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cp -i 0001.jpg 0002.jpg
+</code></pre></div>
+<p>You can use wildcards to copy several files at once. To copy all the files in the current directory to a subdirectory named <strong>photos</strong>, do this:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cp * photos
+</code></pre></div>
+<p>To copy all the files in a subdirectory named <strong>photos</strong> into a subdirectory named <strong>images</strong>, do this:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cp photos/* images
+</code></pre></div>
+<p>This assumes that the <strong>images</strong> directory already exists. If it doesn't, you can create it <em>and</em> copy the contents of the <strong>photos</strong> directory by using this command:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cp -r photos images
+</code></pre></div>
+<p>The <code>-r</code> stands for "recursive." An added benefit of the <code>-r</code> flag is that if <strong>photos</strong> contains subdirectories of its own, they too are copied to the <strong>images</strong> directory.</p>
+<h3 id="ps-command"><code>ps</code> command<a class="headerlink" href="#ps-command" title="Permanent link">&para;</a></h3>
+<p>The <code>ps</code> command gives you a snapshot of all the currently running processes. By itself, with no arguments, it shows all your shell processes; in other words, not much. But it's a different story when you include a <code>-e</code> flag:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ps -e
+</code></pre></div>
+<p><code>-e</code> lists <em>all</em> running processes, and there are typically many of them.</p>
+<p>For a more comprehensive look at what processes are running in the system, use the <code>-ef</code> flag:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ps -ef 
+</code></pre></div>
+<p>This flag shows the names of all the running processes, their process identification numbers (PIDs), the PIDs of their parents (PPIDs), and when they began (STIME). It also shows what terminal, if any, they're attached to (TTY), how much CPU time they've racked up (TIME), and their full path names. Here's an abbreviated example:</p>
+<p>Copy</p>
+<div class="highlight"><pre><span></span><code>UID         PID   PPID  C STIME TTY          TIME CMD
+root          1      0  0 13:35 ?        00:00:03 /sbin/init
+root          2      0  0 13:35 ?        00:00:00 [kthreadd]
+root          3      2  0 13:35 ?        00:00:00 [rcu_gp]
+root          4      2  0 13:35 ?        00:00:00 [rcu_par_gp]
+root          5      2  0 13:35 ?        00:00:00 [kworker/0:0-cgr]
+root          6      2  0 13:35 ?        00:00:00 [kworker/0:0H-kb]
+root          8      2  0 13:35 ?        00:00:00 [mm_percpu_wq]
+root          9      2  0 13:35 ?        00:00:01 [ksoftirqd/0]
+root         10      2  0 13:35 ?        00:00:02 [rcu_sched]
+</code></pre></div>
+<p>As an aside, you might find documentation that shows <code>ps</code> being used this way:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ps aux
+</code></pre></div>
+<p><code>ps aux</code> and <code>ps -ef</code> are the same. This duality traces back to historical differences between POSIX Unix systems (of which Linux is one) and BSD Unix systems (the most common of which is macOS). In the beginning, POSIX used <code>-ef</code> while the BSD required <code>aux</code>. Today, both operating-system families accept either format.</p>
+<p>This serves as an excellent reminder of why you should look closely at the manual for all Linux commands. Learning Bash is like learning English as a second language. There are many exceptions to the rules.</p>
+<h3 id="w-command"><code>w</code> command<a class="headerlink" href="#w-command" title="Permanent link">&para;</a></h3>
+<p>Users come, users go, and sometimes you get users you don't want at all. When an employee leaves to pursue other opportunities, the sysadmin is called upon to ensure that the worker can no longer sign in to the company's computer systems. Sysadmins are also expected to know who's logged in, and who shouldn't be.</p>
+<p>To find out who's on your servers, Linux provides the <code>w</code> (for "who") command. It displays information about the users currently on the computer system and those users' activities. <code>w</code> shows user names, their IP addresses, when they logged in, what processes they're currently running, and how much time those processes are consuming. It's a valuable tool for sysadmins.</p>
+<h2 id="bash-io-operators">Bash I/O operators<a class="headerlink" href="#bash-io-operators" title="Permanent link">&para;</a></h2>
+<p>You can do a lot in Linux just by exercising Bash commands and their many options. But you can really get work done when you combine commands by using I/O operators:</p>
+<ul>
+<li><code>&lt;</code> for redirecting input to a source other than the keyboard</li>
+<li><code>&gt;</code> for redirecting output to destination other than the screen</li>
+<li><code>&gt;&gt;</code> for doing the same, but appending rather than overwriting</li>
+<li><code>|</code> for piping output from one command to the input of another</li>
+</ul>
+<p>Suppose you want to list everything in the current directory but capture the output in a file named <strong>listing.txt</strong>. The following command does just that:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls &gt; listing.txt
+</code></pre></div>
+<p>If <strong>listing.txt</strong> already exists, it gets overwritten. If you use the <code>&gt;&gt;</code> operator instead, the output from <code>ls</code> is appended to what's already in <strong>listing.txt</strong>:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ls &gt;&gt; listing.txt
+</code></pre></div>
+<p>The piping operator is powerful (and often used). It redirects the output of the first command to the input of the second command. Let's say you use <code>cat</code> to display the contents of a large file, but the content scrolls by too quickly for you to read. You can make the output more manageable by piping the results to another command such as <code>more</code>. The following command lists all the currently running processes. But once the screen is full, the output pauses until you select <strong>Enter</strong> to show the next line:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ps -ef | more
+</code></pre></div>
+<p>You can also pipe output to <code>head</code> to see just the first several lines:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ps -ef | head
+</code></pre></div>
+<p>Or suppose you want to filter the output to include only the lines that contain the word "daemon." One way to do that is by piping the output from <code>ps</code> to Linux's useful <code>grep</code> tool:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>ps -ef | grep daemon
+</code></pre></div>
+<p>The output might look like this:</p>
+<p>OutputCopy</p>
+<div class="highlight"><pre><span></span><code>azureus+  52463  50702  0 23:28 pts/0    00:00:00 grep --color=auto deamon
+azureuser@bash-vm:~$ ps -ef | grep daemon
+root        449      1  0 13:35 ?        00:00:17 /usr/lib/linux-tools/4.18.0-1018-azure/hv_kvp_daemon -n
+root        988      1  0 13:35 ?        00:00:00 /usr/lib/accountsservice/accounts-daemon
+message+   1002      1  0 13:35 ?        00:00:00 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+daemon     1035      1  0 13:35 ?        00:00:00 /usr/sbin/atd -f
+root       1037      1  0 13:35 ?        00:00:00 /usr/bin/python3 -u /usr/sbin/waagent -daemon
+root       1039      1  0 13:35 ?        00:00:00 /usr/lib/linux-tools/4.18.0-1018-azure/hv_vss_daemon -n
+azureus+  52477  50702  0 23:28 pts/0    00:00:00 grep --color=auto daemon
+</code></pre></div>
+<p>You can also use files as input. By default, standard input comes from the keyboard, but it too can be redirected. To get input from a file instead of the keyboard, use the <code>&lt;</code> operator. One common sysadmin task is to sort the contents of a file. As the name suggests, <code>sort</code> sorts text in alphabetical order:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>sort &lt; file.txt
+</code></pre></div>
+<p>To save the sorted results to a new file, you can redirect input <em>and</em> output:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>sort &lt; file.txt &gt; sorted_file.txt
+</code></pre></div>
+<p>You can use I/O operators to chain Linux commands as needed. Consider the following command:</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>cat file.txt | fmt | pr | lpr
+</code></pre></div>
+<p>The output from <code>cat</code> goes to <code>fmt</code>, the output from <code>fmt</code> goes to <code>pr</code>, and so on. <code>fmt</code> formats the results into a tidy paragraph. <code>pr</code> paginates the results. And <code>lpr</code> sends the paginated output to the printer. All in a single line!</p>
+<hr />
+<h1 id="introduction-to-powershell">Introduction to PowerShell<a class="headerlink" href="#introduction-to-powershell" title="Permanent link">&para;</a></h1>
+<p>PowerShell is a command-line shell and a scripting language all in one. It was designed as a task engine that uses cmdlets to wrap tasks that people need to do. In PowerShell, you can run commands on local or remote machines. You can do tasks like managing users and automating workflows.</p>
+<p>Whether you're part of an operations team or a development team that's adopting DevOps principles, PowerShell can help. You can use it to address various tasks, such as managing cloud resources and continuous integration and continuous delivery (CI/CD). PowerShell offers many helpful commands, but you can expand its capabilities at any time by installing modules.</p>
+<p>When you install PowerShell, you can evaluate its features to see if it's a good fit for your team.</p>
+<h1 id="what-is-powershell">What is PowerShell?<a class="headerlink" href="#what-is-powershell" title="Permanent link">&para;</a></h1>
+<p>PowerShell consists of two parts: a command-line shell and a scripting language. It started out as a framework to automate administrative tasks in Windows. PowerShell has grown into a cross-platform tool that's used for many kinds of tasks.</p>
+<p>A command-line shell lacks a graphical interface, where you use a mouse to interact with graphical elements. Instead, you type text commands into a computer console. Here are some of the benefits of using a console:</p>
+<ul>
+<li>Interacting with a console is often faster than using a graphical interface.</li>
+<li>In a console, you can run batches of commands, so it's ideal for task automation for continuous-integration pipelines.</li>
+<li>You can use a console to interact with cloud resources and other resources.</li>
+<li>You can store commands and scripts in a text file and use a source-control system. This capability is probably one of the biggest benefits, because your commands are repeatable and auditable. In many systems, especially government systems, everything must be traced and evaluated, or <em>audited</em>. Audits cover everything from database changes to changes done by a script.</li>
+</ul>
+<h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
+<p>PowerShell shares some features with traditional shells:</p>
+<ul>
+<li><strong>Built-in help system</strong>: Most shells have some kind of help system, in which you can learn more about a command. For example, you can learn what the command does and what parameters it supports. The help system in PowerShell provides information about commands and also integrates with online help articles.</li>
+<li><strong>Pipeline</strong>: Traditional shells use a pipeline to run many commands sequentially. The output of one command is the input for the next command. PowerShell implements this concept like traditional shells, but it differs because it operates on objects over text. You learn more about this feature later in this module.</li>
+<li><strong>Aliases</strong>: Aliases are alternate names that can be used to run commands. PowerShell supports the use of common aliases such as <code>cls</code> (clear the screen) and <code>ls</code> (list the files). Therefore, new users can use their knowledge of other frameworks and don't necessarily have to remember the PowerShell name for familiar commands.</li>
+</ul>
+<p>PowerShell differs from a traditional command-line shell in a few ways:</p>
+<ul>
+<li><strong>It operates on objects over text.</strong> In a command-line shell, you have to run scripts whose output and input might differ, so you end up spending time formatting the output and extracting the data you need. By contrast, in PowerShell you use objects as input and output. That means you spend less time formatting and extracting.</li>
+<li><strong>It has cmdlets.</strong> Commands in PowerShell are called cmdlets (pronounced <em>commandlets</em>). In PowerShell, cmdlets are built on a common runtime rather than separate executables as they are in many other shell environments. This characteristic provides a consistent experience in parameter parsing and pipeline behavior. Cmdlets typically take object input and return objects. The core cmdlets in PowerShell are built in .NET Core, and are open source. You can extend PowerShell by using more cmdlets, scripts, and functions from the community and other sources, or you can build your own cmdlets in .NET Core or PowerShell.</li>
+<li><strong>It has many types of commands.</strong> Commands in PowerShell can be native executables, cmdlets, functions, scripts, or aliases. Every command you run belongs to one of these types. The words <em>command</em> and <em>cmdlet</em> are often used interchangeably, because a cmdlet is a type of command.</li>
+</ul>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<p>In this module, you practice using PowerShell on your computer. PowerShell is available across platforms. However, if you use a computer that runs Linux, macOS, or an older version of Windows, you need to install it.</p>
+<p>Instructions for installing PowerShell are different for each OS. Before you continue, take a few minutes to install PowerShell or to verify your PowerShell installation. The next unit in this module shows you how to verify your installation.</p>
+<h3 id="windows">Windows<a class="headerlink" href="#windows" title="Permanent link">&para;</a></h3>
+<p>If you're running Windows 8 or later, a version of PowerShell called <em>Windows PowerShell</em> should already be installed. This version differs slightly from the most up-to-date PowerShell release, but it works fine for learning purposes.</p>
+<p>You can open Windows PowerShell from the Start menu.</p>
+<h3 id="other-operating-systems">Other operating systems<a class="headerlink" href="#other-operating-systems" title="Permanent link">&para;</a></h3>
+<p>If your computer runs something other than Windows 8 or later, you need to install PowerShell. To find the installation instructions for your OS, see <a href="https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell">Install various versions of PowerShell</a>.</p>
+<h3 id="powershell-extension-for-visual-studio-code">PowerShell extension for Visual Studio Code<a class="headerlink" href="#powershell-extension-for-visual-studio-code" title="Permanent link">&para;</a></h3>
+<p>We recommend that you use the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell">PowerShell extension for Visual Studio Code</a> to author your PowerShell scripts and to run the commands in this module. This extension lets you run commands, and also helps you with snippets, code completion, and syntax highlighting.</p>
+<hr />
+<h1 id="locate-commands">Locate commands<a class="headerlink" href="#locate-commands" title="Permanent link">&para;</a></h1>
+<p>A <em>cmdlet</em> (pronounced "command-let") is a compiled command. A cmdlet can be developed in .NET or .NET Core and invoked as a command within PowerShell. Thousands of cmdlets are available in your PowerShell installation. The challenge lies in discovering what the cmdlets are and what they can do for you.</p>
+<p>Cmdlets are named according to a verb-noun naming standard. This pattern can help you to understand what they do and how to search for them. It also helps cmdlet developers create consistent names. You can see the list of approved verbs by using the <code>Get-Verb</code> cmdlet. Verbs are organized according to activity type and function.</p>
+<p>Here's a part of the output from running <code>Get-Verb</code>:</p>
+<p>OutputCopy</p>
+<div class="highlight"><pre><span></span><code>Verb        AliasPrefix Group          Description
+----        ----------- -----          -----------
+Add         a           Common         Adds a resource to a container, or atta…
+Clear       cl          Common         Removes all the resources from a contai…
+</code></pre></div>
+<p>This listing shows the verb and its description. Cmdlet developers should use an approved verb, and also ensure that the verb description fits their cmdlet's function.</p>
+<p>Three core cmdlets allow you to delve into what cmdlets exist and what they do:</p>
+<ul>
+<li><strong>Get-Command</strong>: The <code>Get-Command</code> cmdlet lists all of the available cmdlets on your system. Filter the list to quickly find the command you need.</li>
+<li><strong>Get-Help</strong>: Run the <code>Get-Help</code> core cmdlet to invoke a built-in help system. You can also run an alias <code>help</code> command to invoke <code>Get-Help</code> but improve the reading experience by paginating the response.</li>
+<li><strong>Get-Member</strong>: When you call a command, the response is an object that contains many properties. Run the <code>Get-Member</code> core cmdlet to drill down into that response and learn more about it.</li>
+</ul>
+<h2 id="locate-commands-by-using-get-command">Locate commands by using Get-Command<a class="headerlink" href="#locate-commands-by-using-get-command" title="Permanent link">&para;</a></h2>
+<p>When you run the <code>Get-Command</code> cmdlet in Cloud Shell, you get a list of every command that's installed in PowerShell. Because thousands of commands are installed, you need a way to filter the response so you can quickly locate the command that you need.</p>
+<p>To filter the list, keep in mind the verb-noun naming standard for cmdlets. For example, in the <code>Get-Random</code> command, <code>Get</code> is the verb and <code>Random</code> is the noun. Use flags to target either the verb or the noun in the command you want. The flag you specify expects a value that's a string. You can add pattern-matching characters to that string to ensure you express that, for example, a flag's value should start or end with a certain string.</p>
+<p>These examples show how to use flags to filter a command list:</p>
+<ul>
+<li>
+<p><strong>-Noun</strong>: The <code>-Noun</code> flag targets the part of the command name that's related to the noun. Here's a typical search for a command name using <em>alias</em> as the noun for which we're searching:</p>
+<p>PowerShellCopy</p>
+<div class="highlight"><pre><span></span><code>Get-Command -Noun alias*
+</code></pre></div>
+<p>This command searches for all cmdlets whose noun part starts with <code>alias</code>.</p>
+</li>
+<li>
+<p><strong>-Verb</strong>: The <code>-Verb</code> flag targets the part of the command name that's related to the verb. You can combine the <code>-Noun</code> flag and the <code>-Verb</code> flag to create an even more detailed search query and type. Here's an example:</p>
+<p>PowerShellCopy</p>
+<div class="highlight"><pre><span></span><code>Get-Command -Verb Get -Noun alias*
+</code></pre></div>
+<p>Now you've narrowed the search to specify that the verb part needs to match <code>Get</code>, and the noun part needs to match <code>alias</code>.</p>
+</li>
+</ul>
+<hr />
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": [], "search": "../../../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+        <script src="../../../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
