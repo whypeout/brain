@@ -1,3 +1,9 @@
+---
+draft: true
+date: 2024-11-14
+slug: Az 104 - Implement and Manage storage in azure
+tags:
+---
 
 # Configure storage accounts
 

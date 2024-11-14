@@ -1,3 +1,9 @@
+---
+draft: true
+date: 2024-11-14
+slug: Az 104 - Managed Identities Governance
+tags:
+---
 
 # Microsoft Entra ID
 

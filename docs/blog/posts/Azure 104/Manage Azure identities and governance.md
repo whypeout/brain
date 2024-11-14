@@ -1,3 +1,9 @@
+---
+draft: true
+date: 2024-11-14
+slug: Manage Azure identities and governance
+tags:
+---
 #### Manage Microsoft Entra users and groups
 - Create users and groups
 - Manage user and group properties

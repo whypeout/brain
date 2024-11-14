@@ -1,3 +1,9 @@
+---
+draft: true
+date: 2024-11-14
+slug: Monitor and maintain Azure resources
+tags:
+---
 
 #### Monitor resources in Azure
 

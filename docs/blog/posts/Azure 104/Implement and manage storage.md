@@ -1,3 +1,9 @@
+---
+draft: true
+date: 2024-11-14
+slug: Implement and manage storage
+tags:
+---
 
 #### Configure access to storage
 

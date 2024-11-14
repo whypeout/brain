@@ -1,3 +1,9 @@
+---
+draft: true
+date: 2024-11-14
+slug: Az 104 - Deploy and manage azure compute resources
+tags:
+---
 
 # Configure virtual machines
 

@@ -1,7 +1,7 @@
 ---
 draft: true
-date: 2024-10-23
-slug: Untitled
+date: 2024-11-14
+slug: Implement Containerized Solution
 tags:
   - az204
   - 01-implement-containerized-solution

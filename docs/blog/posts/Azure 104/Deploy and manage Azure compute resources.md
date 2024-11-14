@@ -1,3 +1,9 @@
+---
+draft: true
+date: 2024-11-14
+slug: Deploy and manage Azure compute resources
+tags:
+---
 
 #### Automate deployment of resources by using Azure Resource Manager (ARM) templates or Bicep files
 

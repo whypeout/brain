@@ -1,3 +1,9 @@
+---
+draft: true
+date: 2024-11-14
+slug: Implement and manage virtual networking
+tags:
+---
 
 #### Configure and manage virtual networks in Azure
 
