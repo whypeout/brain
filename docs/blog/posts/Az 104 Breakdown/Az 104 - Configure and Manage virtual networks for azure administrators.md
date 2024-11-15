@@ -1,8 +1,10 @@
 ---
-draft: true
+draft: false
 date: 2024-11-14
 slug: Az 104 - Configure and Manage virtual networks for azure administrators
 tags:
+  - az104
+  - azure
 ---
 
 # Configure virtual networks
