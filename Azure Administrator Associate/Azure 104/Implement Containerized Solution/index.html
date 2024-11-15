@@ -1,0 +1,2078 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../Deploy%20and%20manage%20Azure%20compute%20resources/">
+      
+      
+        <link rel="next" href="../Implement%20and%20manage%20storage/">
+      
+      
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../../feed_rss_updated.xml">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.44">
+    
+    
+      
+        <title>Implement Containerized Solution - Atoni Brain Washed</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.0253249f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="pink" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#explore-azure-app-service" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Atoni Brain Washed" class="md-header__button md-logo" aria-label="Atoni Brain Washed" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Atoni Brain Washed
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Implement Containerized Solution
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="pink" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="pink" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Atoni Brain Washed" class="md-nav__button md-logo" aria-label="Atoni Brain Washed" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Atoni Brain Washed
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Obsidian Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Azure Administrator Associate
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Azure Administrator Associate
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Az 104 Breakdown
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            Az 104 Breakdown
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Az%20104%20Breakdown/Az%20104%20-%20Configure%20and%20Manage%20virtual%20networks%20for%20azure%20administrators/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure virtual networks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Az%20104%20Breakdown/Az%20104%20-%20Deploy%20and%20manage%20azure%20compute%20resources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure virtual machines
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Az%20104%20Breakdown/Az%20104%20-%20Implement%20and%20Manage%20storage%20in%20azure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configure storage accounts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Az%20104%20Breakdown/Az%20104%20-%20Managed%20Identities%20Governance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Microsoft Entra ID
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Az%20104%20Breakdown/Az%20104%20-%20Monitor%20and%20backup%20azure%20resources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction to Azure Backup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Az%20104%20Breakdown/Az%20104%20-%20Prerequisites%20Azure%20Administrator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction to Azure Cloud Shell
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Azure 104
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Azure 104
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Deploy%20and%20manage%20Azure%20compute%20resources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deploy and manage Azure compute resources
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Implement Containerized Solution
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Implement Containerized Solution
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#explore-azure-app-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Explore Azure App Service
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-auto-scale-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Built-in auto scale support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#container-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Container support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#continuous-integrationdeployment-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Continuous integration/deployment support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deployment slots
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#app-service-on-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      App Service on Linux
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="App Service on Linux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Limitations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examine-azure-app-service-plans" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examine Azure App Service plans
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examine Azure App Service plans">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-does-my-app-run-and-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      How does my app run and scale?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-if-my-app-needs-more-capabilities-or-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      What if my app needs more capabilities or features?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deploy-to-app-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deploy to App Service
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploy to App Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automated-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automated deployment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manual-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manual deployment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-deployment-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use deployment slots
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Use deployment slots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#continuously-deploy-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Continuously deploy code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#continuously-deploy-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Continuously deploy containers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explore-authentication-and-authorization-in-app-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Explore authentication and authorization in App Service
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Explore authentication and authorization in App Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-use-the-built-in-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why use the built-in authentication?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      How it works
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How it works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#authentication-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authentication flow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authorization-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authorization behavior
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Token store
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logging-and-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logging and tracing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discover-app-service-networking-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Discover App Service networking features
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Discover App Service networking features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-tenant-app-service-networking-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-tenant App Service networking features
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-networking-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default networking behavior
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Default networking behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#outbound-addresses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Outbound addresses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#find-outbound-ips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Find outbound IPs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Implement%20and%20manage%20storage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implement and manage storage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Implement%20and%20manage%20virtual%20networking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Implement and manage virtual networking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Manage%20Azure%20identities%20and%20governance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage Azure identities and governance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Monitor%20and%20maintain%20Azure%20resources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitor and maintain Azure resources
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Features
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Features/LaTeX%20Math%20Support/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LaTeX Math Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Features/Mermaid%20Diagrams/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mermaid diagrams
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Features/Text%20Formatting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Text Formatting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Topic 1
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Topic 1
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Topic%201/Note%201/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Note 1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Topic%201/Note%202/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Note 2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../blog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Archive
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Archive
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../blog/archive/2023/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2023
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Categories
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            Categories
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../blog/category/hello/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Hello
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../blog/category/world/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    World
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#explore-azure-app-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Explore Azure App Service
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-auto-scale-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Built-in auto scale support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#container-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Container support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#continuous-integrationdeployment-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Continuous integration/deployment support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deployment slots
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#app-service-on-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      App Service on Linux
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="App Service on Linux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Limitations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examine-azure-app-service-plans" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examine Azure App Service plans
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Examine Azure App Service plans">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-does-my-app-run-and-scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      How does my app run and scale?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-if-my-app-needs-more-capabilities-or-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      What if my app needs more capabilities or features?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deploy-to-app-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deploy to App Service
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploy to App Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automated-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automated deployment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manual-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manual deployment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-deployment-slots" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use deployment slots
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Use deployment slots">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#continuously-deploy-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Continuously deploy code
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#continuously-deploy-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Continuously deploy containers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#explore-authentication-and-authorization-in-app-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      Explore authentication and authorization in App Service
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Explore authentication and authorization in App Service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-use-the-built-in-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why use the built-in authentication?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      How it works
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How it works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#authentication-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authentication flow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authorization-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authorization behavior
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-store" class="md-nav__link">
+    <span class="md-ellipsis">
+      Token store
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logging-and-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Logging and tracing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discover-app-service-networking-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Discover App Service networking features
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Discover App Service networking features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multi-tenant-app-service-networking-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-tenant App Service networking features
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-networking-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      Default networking behavior
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Default networking behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#outbound-addresses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Outbound addresses
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#find-outbound-ips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Find outbound IPs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h2 id="explore-azure-app-service">Explore Azure App Service<a class="headerlink" href="#explore-azure-app-service" title="Permanent link">&para;</a></h2>
+<p>Azure App Service is an HTTP-based service for hosting web applications, REST APIs, and mobile back ends.</p>
+<h2 id="built-in-auto-scale-support">Built-in auto scale support<a class="headerlink" href="#built-in-auto-scale-support" title="Permanent link">&para;</a></h2>
+<p>The ability to scale up/down or scale out/in is baked into the Azure App Service</p>
+<h2 id="container-support">Container support<a class="headerlink" href="#container-support" title="Permanent link">&para;</a></h2>
+<p>With Azure App Service, you can deploy and run containerized web apps on Windows and Linux</p>
+<h2 id="continuous-integrationdeployment-support">Continuous integration/deployment support<a class="headerlink" href="#continuous-integrationdeployment-support" title="Permanent link">&para;</a></h2>
+<p>The Azure portal provides out-of-the-box continuous integration and deployment with Azure DevOps Services, GitHub, Bitbucket, FTP, or a local Git repository on your development machine</p>
+<h2 id="deployment-slots">Deployment slots<a class="headerlink" href="#deployment-slots" title="Permanent link">&para;</a></h2>
+<p>When deploying a web app you can use a separate deployment slot instead of the default production slot when you're running in the Standard App Service Plan tier or better. Deployment slots are live apps with their own host names.</p>
+<h2 id="app-service-on-linux">App Service on Linux<a class="headerlink" href="#app-service-on-linux" title="Permanent link">&para;</a></h2>
+<p>App Service can also host web apps natively on Linux for supported application stacks.</p>
+<h3 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h3>
+<p>App Service on Linux does have some limitations:</p>
+<ul>
+<li>App Service on Linux isn't supported on Shared pricing tier.</li>
+<li>The Azure portal shows only features that currently work for Linux apps. As features are enabled, they're activated on the portal.</li>
+<li>When deployed to built-in images, your code and content are allocated a storage volume for web content, backed by Azure Storage. The disk latency of this volume is higher and more variable than the latency of the container filesystem. Apps that require heavy read-only access to content files might benefit from the custom container option, which places files in the container filesystem instead of on the content volume.</li>
+</ul>
+<hr />
+<h1 id="examine-azure-app-service-plans">Examine Azure App Service plans<a class="headerlink" href="#examine-azure-app-service-plans" title="Permanent link">&para;</a></h1>
+<p>In App Service, an app always runs in an <em>App Service plan</em>. An App Service plan defines a set of compute resources for a web app to run. One or more apps can be configured to run on the same computing resources (or in the same App Service plan).</p>
+<p>When you create an App Service plan in a certain region (for example, West Europe), a set of compute resources is created for that plan in that region. Each App Service plan defines:
+- Operating System (Windows, Linux)
+- Region (West US, East US, etc.)
+- Number of VM instances
+- Size of VM instances (Small, Medium, Large)
+- Pricing tier (Free, Shared, Basic, Standard, Premium, PremiumV2, PremiumV3, Isolated, IsolatedV2)</p>
+<p>There are a few categories of pricing tiers:</p>
+<ul>
+<li><strong>Shared compute</strong>: <strong>Free</strong> and <strong>Shared</strong>, the two base tiers, runs an app on the same Azure VM as other App Service apps, including apps of other customers. These tiers allocate CPU quotas to each app that runs on the shared resources, and the <code>resources can't scale out</code>.</li>
+<li><strong>Dedicated compute</strong>: The <strong>Basic</strong>, <strong>Standard</strong>, <strong>Premium</strong>, <strong>PremiumV2</strong>, and <strong>PremiumV3</strong> tiers run apps on dedicated Azure VMs. Only apps in the same App Service plan share the same compute resources. The higher the tier, the more VM instances are available to you for scale-out.</li>
+<li><strong>Isolated</strong>: The <strong>Isolated</strong> and <strong>IsolatedV2</strong> tiers run dedicated Azure VMs on dedicated Azure Virtual Networks. It provides <code>network isolation</code> on top of compute isolation to your apps. It provides the maximum scale-out capabilities.</li>
+</ul>
+<h2 id="how-does-my-app-run-and-scale">How does my app run and scale?<a class="headerlink" href="#how-does-my-app-run-and-scale" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>Free &amp; Shared tidak bisa scale-out.</p>
+</blockquote>
+<p>app runs and scales as follows:</p>
+<ul>
+<li>An app runs on all the VM instances configured in the App Service plan.</li>
+<li>If multiple apps are in the same App Service plan, they all share the same VM instances.</li>
+<li>If you have multiple deployment slots for an app, all deployment slots also run on the same VM instances.</li>
+<li>If you enable diagnostic logs, perform backups, or run WebJobs, they also use CPU cycles and memory on these VM instances.</li>
+</ul>
+<p>In this way, the App Service plan is the <strong>scale unit</strong> of the App Service apps. If the plan is configured to run five VM instances, then all apps in the plan run on all five instances. If the plan is configured for autoscaling, then all apps in the plan are scaled out together based on the autoscale settings.</p>
+<h2 id="what-if-my-app-needs-more-capabilities-or-features">What if my app needs more capabilities or features?<a class="headerlink" href="#what-if-my-app-needs-more-capabilities-or-features" title="Permanent link">&para;</a></h2>
+<p>Your App Service plan can be scaled up and down at any time. It's as simple as changing the pricing tier of the plan. If your app is in the same App Service plan with other apps, you may want to improve the app's performance by isolating the compute resources. You can do it by moving the app into a separate App Service plan.</p>
+<p>You can potentially save money by putting multiple apps into one App Service plan. However, since apps in the same App Service plan all share the same compute resources you need to understand the capacity of the existing App Service plan and the expected load for the new app.</p>
+<p>Isolate your app into a new App Service plan when:</p>
+<ul>
+<li>The app is resource-intensive.</li>
+<li>You want to scale the app independently from the other apps in the existing plan.</li>
+<li>The app needs resource in a different geographical region.</li>
+</ul>
+<p>This way you can allocate a new set of resources for your app and gain greater control of your apps.</p>
+<hr />
+<h1 id="deploy-to-app-service">Deploy to App Service<a class="headerlink" href="#deploy-to-app-service" title="Permanent link">&para;</a></h1>
+<p>Every development team has unique requirements that can make implementing an efficient deployment pipeline difficult on any cloud service. App Service supports both automated and manual deployment.</p>
+<h2 id="automated-deployment">Automated deployment<a class="headerlink" href="#automated-deployment" title="Permanent link">&para;</a></h2>
+<p>Automated deployment, or continuous deployment, is a process used to push out new features and bug fixes in a fast and repetitive pattern with minimal effect on end users.</p>
+<p>Azure supports automated deployment directly from several sources. The following options are available:</p>
+<ul>
+<li><strong>Azure DevOps Services</strong>: You can push your code to Azure DevOps Services, build your code in the cloud, run the tests, generate a release from the code, and finally, push your code to an Azure Web App.</li>
+<li><strong>GitHub</strong>: Azure supports automated deployment directly from GitHub. When you connect your GitHub repository to Azure for automated deployment, any changes you push to your production branch on GitHub are automatically deployed for you.</li>
+<li><strong>Bitbucket</strong>: With its similarities to GitHub, you can configure an automated deployment with Bitbucket.</li>
+</ul>
+<h2 id="manual-deployment">Manual deployment<a class="headerlink" href="#manual-deployment" title="Permanent link">&para;</a></h2>
+<p>There are a few options that you can use to manually push your code to Azure:</p>
+<ul>
+<li><strong>Git</strong>: App Service web apps feature a Git URL that you can add as a remote repository. Pushing to the remote repository deploys your app.</li>
+<li><strong>CLI</strong>: <code>webapp up</code> is a feature of the <code>az</code> command-line interface that packages your app and deploys it. Unlike other deployment methods, <code>az webapp up</code> can create a new App Service web app for you if you haven't already created one.</li>
+<li><strong>Zip deploy</strong>: Use <code>curl</code> or a similar HTTP utility to send a ZIP of your application files to App Service.</li>
+<li><strong>FTP/S</strong>: FTP or FTPS is a traditional way of pushing your code to many hosting environments, including App Service.</li>
+</ul>
+<h2 id="use-deployment-slots">Use deployment slots<a class="headerlink" href="#use-deployment-slots" title="Permanent link">&para;</a></h2>
+<p>Whenever possible, use deployment slots when deploying a new production build. When using a <strong>Standard App Service Plan tier or better</strong>, you can deploy your app to a staging environment and then swap your staging and production slots. <strong>The swap operation warms up the necessary worker instances to match your production scale</strong>, thus eliminating downtime.</p>
+<h3 id="continuously-deploy-code">Continuously deploy code<a class="headerlink" href="#continuously-deploy-code" title="Permanent link">&para;</a></h3>
+<p>If your project has designated branches for testing, QA, and staging, then each of those branches should be continuously deployed to a staging slot. This allows your stakeholders to easily assess and test the deployed branch.</p>
+<h3 id="continuously-deploy-containers">Continuously deploy containers<a class="headerlink" href="#continuously-deploy-containers" title="Permanent link">&para;</a></h3>
+<p>For custom containers from Azure Container Registry or other container registries, deploy the image into a staging slot and swap into production to prevent downtime. The automation is more complex than code deployment because you must push the image to a container registry and update the image tag on the webapp.</p>
+<ul>
+<li><strong>Build and tag the image</strong>: As part of the build pipeline, tag the image with the git commit ID, timestamp, or other identifiable information. It’s best not to use the default “latest” tag. Otherwise, it’s difficult to trace back what code is currently deployed, which makes debugging far more difficult.</li>
+<li><strong>Push the tagged image</strong>: Once the image is built and tagged, the pipeline pushes the image to our container registry. In the next step, the deployment slot will pull the tagged image from the container registry.</li>
+<li><strong>Update the deployment slot with the new image tag</strong>: When this property is updated, the site will automatically restart and pull the new container image.</li>
+</ul>
+<blockquote>
+<p>Continuous Deploy container dari registry dengan image tag dari commit ID/timestamp</p>
+</blockquote>
+<hr />
+<h1 id="explore-authentication-and-authorization-in-app-service">Explore authentication and authorization in App Service<a class="headerlink" href="#explore-authentication-and-authorization-in-app-service" title="Permanent link">&para;</a></h1>
+<h2 id="why-use-the-built-in-authentication">Why use the built-in authentication?<a class="headerlink" href="#why-use-the-built-in-authentication" title="Permanent link">&para;</a></h2>
+<p>You're not required to use App Service for authentication and authorization.</p>
+<p>The built-in authentication feature for App Service and Azure Functions can save you time and effort by providing out-of-the-box authentication with federated identity providers, allowing you to focus on the rest of your application.</p>
+<blockquote>
+<p>built-in authentication membuat kita lebih fokus pada aplikasi daripada otentikasi itu sendiri</p>
+</blockquote>
+<ul>
+<li>Azure App Service allows you to integrate various auth capabilities into your web app or API without implementing them yourself.</li>
+<li>Auth is built directly into the platform and doesn’t require any particular language, SDK, security expertise, or code.</li>
+<li>You can integrate with multiple login providers. For example, Microsoft Entra ID, Facebook, Google, X.</li>
+</ul>
+<p>## Identity providers</p>
+<p>App Service uses federated identity, in which a third-party identity provider manages the user identities and authentication flow for you. The following identity providers are available by default:</p>
+<p>Expand table</p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Sign-in endpoint</th>
+<th>How-To guidance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Microsoft identity platform</td>
+<td><code>/.auth/login/aad</code></td>
+<td><a href="https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-aad">App Service Microsoft identity platform login</a></td>
+</tr>
+<tr>
+<td>Facebook</td>
+<td><code>/.auth/login/facebook</code></td>
+<td><a href="https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-facebook">App Service Facebook login</a></td>
+</tr>
+<tr>
+<td>Google</td>
+<td><code>/.auth/login/google</code></td>
+<td><a href="https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-google">App Service Google login</a></td>
+</tr>
+<tr>
+<td>X</td>
+<td><code>/.auth/login/twitter</code></td>
+<td><a href="https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-twitter">App Service X login</a></td>
+</tr>
+<tr>
+<td>Any OpenID Connect provider</td>
+<td><code>/.auth/login/&lt;providerName&gt;</code></td>
+<td><a href="https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-openid-connect">App Service OpenID Connect login</a></td>
+</tr>
+<tr>
+<td>GitHub</td>
+<td><code>/.auth/login/github</code></td>
+<td><a href="https://learn.microsoft.com/en-us/azure/app-service/configure-authentication-provider-github">App Service GitHub login</a></td>
+</tr>
+</tbody>
+</table>
+<p>When you enable authentication and authorization with one of these providers, its sign-in endpoint is available for user authentication and for validation of authentication tokens from the provider. You can provide your users with any number of these sign-in options.</p>
+<h2 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
+<p>The authentication and authorization module runs in the same sandbox as your application code. When enabled, every incoming HTTP request passes through it before being handed to your application code. This module handles several things for your app:</p>
+<ul>
+<li>Authenticates users and clients with the specified identity provider</li>
+<li>Validates, stores, and refreshes OAuth tokens issued by the configured identity provider</li>
+<li>Manages the authenticated session</li>
+<li>Injects identity information into HTTP request headers</li>
+</ul>
+<p>The module runs separately from your application code and can be configured using Azure Resource Manager  <strong>ARM</strong> settings or using a configuration file. No SDKs, specific programming languages, or changes to your application code are required.</p>
+<blockquote>
+<p>Note</p>
+<p>In Linux and containers the authentication and authorization module runs in a separate container, isolated from your application code. Because it does not run in-process, no direct integration with specific language frameworks is possible.</p>
+</blockquote>
+<h3 id="authentication-flow">Authentication flow<a class="headerlink" href="#authentication-flow" title="Permanent link">&para;</a></h3>
+<p>The authentication flow is the same for all providers, but differs depending on whether you want to sign in with the provider's SDK.</p>
+<ul>
+<li>
+<p>Without provider SDK: The application delegates federated sign-in to App Service. This delegation is typically the case with browser apps, which can present the provider's login page to the user. The server code manages the sign-in process and is referred to as <em>server-directed flow</em> or <em>server flow</em>.</p>
+</li>
+<li>
+<p>With provider SDK: The application signs users in to the provider manually and then submits the authentication token to App Service for validation. This is typically the case with browser-less apps, which can't present the provider's sign-in page to the user. The application code manages the sign-in process and is referred to as <em>client-directed flow</em> or <em>client flow</em>. This applies to REST APIs, Azure Functions, JavaScript browser clients, and native mobile apps that sign users in using the provider's SDK.</p>
+</li>
+</ul>
+<p>The following table shows the steps of the authentication flow.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Without provider SDK</th>
+<th>With provider SDK</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sign user in</td>
+<td>Redirects client to <code>/.auth/login/&lt;provider&gt;</code>.</td>
+<td>Client code signs user in directly with provider's SDK and receives an authentication token. For information, see the provider's documentation.</td>
+</tr>
+<tr>
+<td>Post-authentication</td>
+<td>Provider redirects client to <code>/.auth/login/&lt;provider&gt;/callback</code>.</td>
+<td>Client code posts token from provider to <code>/.auth/login/&lt;provider&gt;</code> for validation.</td>
+</tr>
+<tr>
+<td>Establish authenticated session</td>
+<td>App Service adds authenticated cookie to response.</td>
+<td>App Service returns its own authentication token to client code.</td>
+</tr>
+<tr>
+<td>Serve authenticated content</td>
+<td>Client includes authentication cookie in subsequent requests (automatically handled by browser).</td>
+<td>Client code presents authentication token in <code>X-ZUMO-AUTH</code> header (automatically handled by Mobile Apps client SDKs).</td>
+</tr>
+</tbody>
+</table>
+<p>For client browsers, App Service can automatically direct all unauthenticated users to <code>/.auth/login/&lt;provider&gt;</code>. You can also present users with one or more <code>/.auth/login/&lt;provider&gt;</code> links to sign in to your app using their provider of choice.</p>
+<h3 id="authorization-behavior">Authorization behavior<a class="headerlink" href="#authorization-behavior" title="Permanent link">&para;</a></h3>
+<p>In the Azure portal, you can configure App Service with many behaviors when an incoming request isn't authenticated.</p>
+<ul>
+<li>
+<p><strong>Allow unauthenticated requests:</strong> This option defers authorization of unauthenticated traffic to your application code. For authenticated requests, App Service also passes along authentication information in the HTTP headers. This option provides more flexibility in handling anonymous requests. It lets you present multiple sign-in providers to your users.</p>
+</li>
+<li>
+<p><strong>Require authentication:</strong> This option rejects any unauthenticated traffic to your application. This rejection can be a redirect action to one of the configured identity providers. In these cases, a browser client is redirected to <code>/.auth/login/&lt;provider&gt;</code> for the provider you choose. If the anonymous request comes from a native mobile app, the returned response is an <code>HTTP 401 Unauthorized</code>. You can also configure the rejection to be an <code>HTTP 401 Unauthorized</code> or <code>HTTP 403 Forbidden</code> for all requests.</p>
+<p>Caution</p>
+<p>Restricting access in this way applies to all calls to your app, which may not be desirable for apps wanting a publicly available home page, as in many single-page applications.</p>
+</li>
+</ul>
+<h3 id="token-store">Token store<a class="headerlink" href="#token-store" title="Permanent link">&para;</a></h3>
+<p>App Service provides a built-in token store, which is a repository of tokens that are associated with the users of your web apps, APIs, or native mobile apps. When you enable authentication with any provider, this token store is immediately available to your app.</p>
+<h3 id="logging-and-tracing">Logging and tracing<a class="headerlink" href="#logging-and-tracing" title="Permanent link">&para;</a></h3>
+<p>If you enable application logging, authentication and authorization traces are collected directly in your log files. If you see an authentication error that you didn't expect, you can conveniently find all the details by looking in your existing application logs.</p>
+<hr />
+<h1 id="discover-app-service-networking-features">Discover App Service networking features<a class="headerlink" href="#discover-app-service-networking-features" title="Permanent link">&para;</a></h1>
+<p>By default, apps hosted in App Service are accessible directly through the internet and can reach only internet-hosted endpoints. But for many applications, you need to control the inbound and outbound network traffic.</p>
+<p>There are two main deployment types for Azure App Service. The <strong>multitenant</strong> public service hosts App Service plans in the Free, Shared, Basic, Standard, Premium, PremiumV2, and PremiumV3 pricing SKUs. There's also the <strong>single-tenant</strong> App Service Environment (ASE) hosts Isolated SKU App Service plans directly in your Azure virtual network.</p>
+<h2 id="multi-tenant-app-service-networking-features">Multi-tenant App Service networking features<a class="headerlink" href="#multi-tenant-app-service-networking-features" title="Permanent link">&para;</a></h2>
+<p>Azure App Service is a distributed system. The roles that handle incoming HTTP or HTTPS requests are called <em>front ends</em>. The roles that host the customer workload are called <em>workers</em>. All the roles in an App Service deployment exist in a multi-tenant network. Because there are many different customers in the same App Service scale unit, you can't connect the App Service network directly to your network.</p>
+<p>Instead of connecting the networks, you need features to handle the various aspects of application communication. The features that handle requests to your app can't be used to solve problems when you're making calls from your app. Likewise, the features that solve problems for calls from your app can't be used to solve problems to your app.</p>
+<p>Expand table</p>
+<table>
+<thead>
+<tr>
+<th>Inbound features</th>
+<th>Outbound features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>App-assigned address</td>
+<td>Hybrid Connections</td>
+</tr>
+<tr>
+<td>Access restrictions</td>
+<td>Gateway-required virtual network integration</td>
+</tr>
+<tr>
+<td>Service endpoints</td>
+<td>Virtual network integration</td>
+</tr>
+<tr>
+<td>Private endpoints</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>You can mix the features to solve your problems with a few exceptions. The following inbound use cases are examples of how to use App Service networking features to control traffic inbound to your app.</p>
+<p>Expand table</p>
+<table>
+<thead>
+<tr>
+<th>Inbound use case</th>
+<th>Feature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Support IP-based SSL needs for your app</td>
+<td>App-assigned address</td>
+</tr>
+<tr>
+<td>Support unshared dedicated inbound address for your app</td>
+<td>App-assigned address</td>
+</tr>
+<tr>
+<td>Restrict access to your app from a set of well-defined addresses</td>
+<td>Access restrictions</td>
+</tr>
+</tbody>
+</table>
+<h2 id="default-networking-behavior">Default networking behavior<a class="headerlink" href="#default-networking-behavior" title="Permanent link">&para;</a></h2>
+<p>Azure App Service scale units support many customers in each deployment. The Free and Shared SKU plans host customer workloads on multitenant workers. The Basic and higher plans host customer workloads that are dedicated to only one App Service plan. If you have a Standard App Service plan, all the apps in that plan run on the same worker. If you scale out the worker, all the apps in that App Service plan are replicated on a new worker for each instance in your App Service plan.</p>
+<h3 id="outbound-addresses">Outbound addresses<a class="headerlink" href="#outbound-addresses" title="Permanent link">&para;</a></h3>
+<p>The worker VMs are broken down in large part by the App Service plans. The Free, Shared, Basic, Standard, and Premium plans all use the same worker VM type. The PremiumV2 plan uses another VM type. PremiumV3 uses yet another VM type. When you change the VM family, you get a different set of outbound addresses.</p>
+<p>There are many addresses that are used for outbound calls. The outbound addresses used by your app for making outbound calls are listed in the properties for your app. These addresses are shared by all the apps running on the same worker VM family in the App Service deployment. If you want to see all the addresses that your app might use in a scale unit, there's a property called <code>possibleOutboundIpAddresses</code> that lists them.</p>
+<h3 id="find-outbound-ips">Find outbound IPs<a class="headerlink" href="#find-outbound-ips" title="Permanent link">&para;</a></h3>
+<p>To find the outbound IP addresses currently used by your app in the Azure portal, select <strong>Properties</strong> in your app's left-hand navigation.</p>
+<p>You can find the same information by running the following Azure CLI command in the Cloud Shell. They're listed in the <strong>Additional Outbound IP Addresses</strong> field.</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>az webapp show \
+    --resource-group &lt;group_name&gt; \
+    --name &lt;app_name&gt; \ 
+    --query outboundIpAddresses \
+    --output tsv
+</code></pre></div>
+<p>To find all possible outbound IP addresses for your app, regardless of pricing tiers, run the following command in the Cloud Shell.</p>
+<p>BashCopy</p>
+<div class="highlight"><pre><span></span><code>az webapp show \
+    --resource-group &lt;group_name&gt; \ 
+    --name &lt;app_name&gt; \ 
+    --query possibleOutboundIpAddresses \
+    --output tsv
+</code></pre></div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+      
+    
+  </body>
+</html>
